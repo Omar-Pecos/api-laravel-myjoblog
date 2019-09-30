@@ -15,15 +15,17 @@ class CreateJourneysTable extends Migration
     {
         Schema::create('journeys', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->date('date');
-            $table->date_time_set('initial_time');
-            $table->date_time_set('final_time');
+            $table->dateTime('initial_time');
+            $table->dateTime('final_time');
             $table->string('initial_pos');
             $table->string('final_pos');
             $table->float('time');
             $table->string('signature');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

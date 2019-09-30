@@ -13,6 +13,19 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+/*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+*/
+
+// registro y login !
+Route::post('/register','UserController@register');
+Route::post('/login','UserController@login');
+
+// Jornadas 
+Route::resource('journeys','JourneyController');
+Route::post('init_journey','JourneyController@init_journey');
+Route::post('end_journey','JourneyController@end_journey');
+
+// Usuarios
+Route::resource('users','UserController');

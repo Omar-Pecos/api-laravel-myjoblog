@@ -215,6 +215,24 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "app/Http/Controllers/JourneyController.php",
+			"settings":
+			{
+				"buffer_size": 2244,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "routes/api.php",
+			"settings":
+			{
+				"buffer_size": 894,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -269,10 +287,30 @@
 	},
 	"expanded_folders":
 	[
-		"/C/wamp64/www/webtimeapi"
+		"/C/wamp64/www/webtimeapi",
+		"/C/wamp64/www/webtimeapi/app",
+		"/C/wamp64/www/webtimeapi/app/Http",
+		"/C/wamp64/www/webtimeapi/app/Http/Controllers",
+		"/C/wamp64/www/webtimeapi/database",
+		"/C/wamp64/www/webtimeapi/routes"
 	],
 	"file_history":
 	[
+		"/C/wamp64/www/webtimeapi/app/Helpers/JwtAuth.php",
+		"/C/wamp64/www/webtimeapi/app/User.php",
+		"/C/wamp64/www/webtimeapi/app/Http/Controllers/UserController.php",
+		"/C/wamp64/www/webtimeapi/app/Providers/JwtAuthServiceProvider.php",
+		"/C/wamp64/www/webtimeapi/config/app.php",
+		"/C/wamp64/www/webtimeapi/database/migrations/2014_10_12_000000_create_users_table.php",
+		"/C/wamp64/www/webtimeapi/composer.json",
+		"/C/wamp64/www/webtimeapi/app/Http/Controllers/Controller.php",
+		"/C/wamp64/www/webtimeapi/routes/api.php",
+		"/C/wamp64/www/webtimeapi/app/Journey.php",
+		"/C/wamp64/www/webtimeapi/app/ActiveJourney.php",
+		"/C/wamp64/www/webtimeapi/app/Providers/AppServiceProvider.php",
+		"/C/wamp64/www/webtimeapi/database/migrations/2019_09_30_150820_create_active_journeys_table.php",
+		"/C/wamp64/www/webtimeapi/database/migrations/2019_09_30_150909_create_journeys_table.php",
+		"/C/wamp64/www/webtimeapi/.env",
 		"/C/wamp64/www/client-angular/src/app/components/default/default.component.html",
 		"/C/wamp64/www/client-angular/src/app/services/car.service.ts",
 		"/C/wamp64/www/client-angular/src/app/components/default/default.component.ts",
@@ -361,8 +399,77 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "app/Http/Controllers/JourneyController.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2244,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1912,
+								1912
+							]
+						],
+						"settings":
+						{
+							"SL.83.region_keys":
+							[
+								"sublime_linter.protected_regions"
+							],
+							"auto_complete": false,
+							"syntax": "Packages/PHP/PHP.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1404.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "routes/api.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 894,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								838,
+								838
+							]
+						],
+						"settings":
+						{
+							"SL.85.region_keys":
+							[
+								"sublime_linter.protected_regions"
+							],
+							"auto_complete": false,
+							"syntax": "Packages/PHP/PHP.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 162.4,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -419,6 +526,10 @@
 		"selected_items":
 		[
 			[
+				"Appserv",
+				"app\\Providers\\AppServiceProvider.php"
+			],
+			[
 				"lib.d.",
 				"node_modules\\typescript\\lib\\lib.d.ts"
 			],
@@ -467,7 +578,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 152.0,
+	"side_bar_width": 241.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

@@ -15,7 +15,14 @@ class CreateActiveJourneysTable extends Migration
     {
         Schema::create('active_journeys', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id');
+            $table->date('date');
+            $table->dateTime('initial_time');
+            $table->string('initial_pos');
+            $table->string('signature');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
