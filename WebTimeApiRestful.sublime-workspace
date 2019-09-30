@@ -1,0 +1,475 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"get",
+				"getCars"
+			],
+			[
+				"_",
+				"_userService"
+			],
+			[
+				"strin",
+				"stringify"
+			],
+			[
+				"stat",
+				"status_car"
+			],
+			[
+				"_rou",
+				"_router"
+			],
+			[
+				"Ca",
+				"Car"
+			],
+			[
+				"car",
+				"car.id"
+			],
+			[
+				"t",
+				"tbody\tTag"
+			],
+			[
+				"this",
+				"this._http"
+			],
+			[
+				"Htt",
+				"HttpHeaders"
+			],
+			[
+				"sele",
+				"selected"
+			],
+			[
+				"Car",
+				"CarService"
+			],
+			[
+				"form",
+				"form-control"
+			],
+			[
+				"re",
+				"required\tAttr"
+			],
+			[
+				"_ro",
+				"_router"
+			],
+			[
+				"router",
+				"routerLink"
+			],
+			[
+				"log",
+				"logout"
+			],
+			[
+				"route",
+				"routerLink"
+			],
+			[
+				"ro",
+				"routerLink"
+			],
+			[
+				"loca",
+				"localStorage"
+			],
+			[
+				"ident",
+				"identity"
+			],
+			[
+				"loc",
+				"localStorage"
+			],
+			[
+				"for",
+				"form"
+			],
+			[
+				"H",
+				"HttpClient"
+			],
+			[
+				"User",
+				"UserService"
+			],
+			[
+				"in",
+				"input\tTag"
+			],
+			[
+				"Reg",
+				"RegisterComponent"
+			],
+			[
+				"na",
+				"navbar"
+			],
+			[
+				"mejor",
+				"mejor_juego_retro"
+			],
+			[
+				"da",
+				"$data〔variable〕"
+			],
+			[
+				"para",
+				"$params〔variable〕"
+			],
+			[
+				"req",
+				"request"
+			],
+			[
+				"dat",
+				"$datos〔variable〕"
+			],
+			[
+				"Va",
+				"ValidationException〔class〕"
+			],
+			[
+				"err",
+				"$errors〔variable〕"
+			],
+			[
+				"val",
+				"$validate〔variable〕"
+			],
+			[
+				"var",
+				"var_dump〔function〕"
+			],
+			[
+				"jso",
+				"$json〔variable〕"
+			],
+			[
+				"jos",
+				"$json〔variable〕"
+			],
+			[
+				"JW",
+				"JwtAuth"
+			],
+			[
+				"A",
+				"App"
+			],
+			[
+				"Au",
+				"JwtAuthServiceProvider〔class〕"
+			],
+			[
+				"deco",
+				"$decoded〔variable〕"
+			],
+			[
+				"de",
+				"decoded"
+			],
+			[
+				"a",
+				"$auth〔variable〕"
+			],
+			[
+				"fal",
+				"false〔keyword〕"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"arr",
+				"array〔keyword〕"
+			],
+			[
+				"iss",
+				"$isset_user〔variable〕"
+			],
+			[
+				"nam",
+				"$name〔variable〕"
+			],
+			[
+				"json",
+				"json_decode〔function〕"
+			],
+			[
+				"miap",
+				"miapi"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 157.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/wamp64/www/webtimeapi"
+	],
+	"file_history":
+	[
+		"/C/wamp64/www/client-angular/src/app/components/default/default.component.html",
+		"/C/wamp64/www/client-angular/src/app/services/car.service.ts",
+		"/C/wamp64/www/client-angular/src/app/components/default/default.component.ts",
+		"/C/wamp64/www/client-angular/src/app/components/car-detail/car-detail.component.ts",
+		"/C/wamp64/www/client-angular/src/app/components/car-new/car-new.component.html",
+		"/C/wamp64/www/client-angular/src/app/components/car-edit/car-edit.component.ts",
+		"/C/wamp64/www/client-angular/src/app/components/car-detail/car-detail.component.html",
+		"/C/wamp64/www/client-angular/src/app/components/car-new/car-new.component.ts",
+		"/C/wamp64/www/client-angular/src/app/models/car.ts",
+		"/C/wamp64/www/client-angular/src/app/app.module.ts",
+		"/C/wamp64/www/client-angular/src/app/app.routing.ts",
+		"/C/wamp64/www/client-angular/src/app/app.component.html",
+		"/C/wamp64/www/client-angular/src/app/components/login/login.component.html",
+		"/C/wamp64/www/client-angular/src/app/app.component.ts",
+		"/C/wamp64/www/client-angular/src/app/components/login/login.component.ts",
+		"/C/wamp64/www/client-angular/src/app/components/register/register.component.html",
+		"/C/wamp64/www/client-angular/src/app/components/register/register.component.ts",
+		"/C/wamp64/www/client-angular/src/app/services/user.service.ts",
+		"/C/wamp64/www/client-angular/src/app/models/user.ts",
+		"/C/wamp64/www/client-angular/src/app/services/global.ts",
+		"/C/wamp64/www/client-angular/src/index.html",
+		"/C/wamp64/www/client-angular/src/app/models",
+		"/C/wamp64/www/client-angular/src/typings.d.ts",
+		"/C/wamp64/www/client-angular/angular.json",
+		"/C/wamp64/www/client-angular/package.json",
+		"/C/wamp64/www/client-angular/node_modules/typescript/lib/lib.d.ts",
+		"/C/wamp64/www/client-angular/node_modules/canonical-path/index.d.ts",
+		"/C/wamp64/www/client-angular/node_modules/reflect-metadata/typings.d.ts",
+		"/C/wamp64/www/client-angular/node_modules/reflect-metadata/standalone.d.ts",
+		"/C/wamp64/www/client-angular/node_modules/typescript/lib/typingsInstaller.js",
+		"/C/wamp64/www/instalacion-angular5/src/app/videojuegos/videojuegos.component.html",
+		"/C/wamp64/www/instalacion-angular5/src/app/videojuegos/videojuegos.component.ts",
+		"/C/wamp64/www/instalacion-angular5/src/app/app.module.ts",
+		"/C/wamp64/www/instalacion-angular5/src/app/app.component.html",
+		"/C/wamp64/www/instalacion-angular5/src/app/app.component.ts",
+		"/C/wamp64/www/api-laravel/routes/api.php",
+		"/C/wamp64/www/api-laravel/app/Http/Controllers/UserController.php",
+		"/C/wamp64/www/api-laravel/.env",
+		"/C/wamp64/www/api-laravel/app/Http/Controllers/CarController.php",
+		"/C/wamp64/www/api-laravel/app/Helpers/JwtAuth.php",
+		"/C/wamp64/www/api-laravel/app/Car.php",
+		"/C/wamp64/www/api-laravel/app/Providers/JwtAuthServiceProvider.php",
+		"/C/wamp64/www/api-laravel/config/app.php",
+		"/C/wamp64/www/api-laravel/app/Http/Kernel.php",
+		"/C/wamp64/www/api-laravel/composer.json",
+		"/C/wamp64/www/api-laravel/routes/web.php",
+		"/C/wamp64/www/api-laravel/database.sql",
+		"/C/miApi/.env",
+		"/C/miApi/Homestead.yaml",
+		"/C/Users/omar/APIRestful/app/User.php",
+		"/C/Users/omar/APIRestful/prueba.txt",
+		"/C/Users/omar/APIRestful/vendor/laravel/framework/src/Illuminate/Notifications/Notifiable.php",
+		"/C/Users/omar/APIRestful/composer.json",
+		"/C/Users/omar/APIRestful/composer.lock"
+	],
+	"find":
+	{
+		"height": 40.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 40.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "WebTimeApiRestful.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"lib.d.",
+				"node_modules\\typescript\\lib\\lib.d.ts"
+			],
+			[
+				"standa",
+				"node_modules\\reflect-metadata\\standalone.d.ts"
+			],
+			[
+				"typin",
+				"node_modules\\reflect-metadata\\typings.d.ts"
+			],
+			[
+				"index.d.",
+				"node_modules\\canonical-path\\index.d.ts"
+			],
+			[
+				"typing",
+				"node_modules\\reflect-metadata\\typings.d.ts"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 152.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
