@@ -23,9 +23,10 @@ Route::post('/register','UserController@register');
 Route::post('/login','UserController@login');
 
 // Jornadas 
-Route::resource('journeys','JourneyController');
-Route::post('init_journey','JourneyController@init_journey');
-Route::post('end_journey','JourneyController@end_journey');
+Route::resource('/journeys','JourneyController');
+
+Route::post('/init_journey','JourneyController@init_journey');
+Route::post('/end_journey','JourneyController@end_journey');
 
 // Usuarios
-Route::resource('users','UserController');
+Route::resource('/users','UserController');

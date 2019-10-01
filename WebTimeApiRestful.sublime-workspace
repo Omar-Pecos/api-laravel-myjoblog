@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"A",
+				"$Ajornada〔variable〕"
+			],
+			[
+				"jorna",
+				"jornada"
+			],
+			[
+				"act",
+				"$active_journey〔variable〕"
+			],
+			[
+				"pos",
+				"$pos_inicial〔variable〕"
+			],
+			[
+				"ac",
+				"$active_journey〔variable〕"
+			],
+			[
 				"get",
 				"getCars"
 			],
@@ -164,10 +184,6 @@
 				"JwtAuth"
 			],
 			[
-				"A",
-				"App"
-			],
-			[
 				"Au",
 				"JwtAuthServiceProvider〔class〕"
 			],
@@ -219,7 +235,7 @@
 			"file": "app/Http/Controllers/JourneyController.php",
 			"settings":
 			{
-				"buffer_size": 2244,
+				"buffer_size": 6564,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -228,7 +244,7 @@
 			"file": "routes/api.php",
 			"settings":
 			{
-				"buffer_size": 894,
+				"buffer_size": 899,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -292,6 +308,7 @@
 		"/C/wamp64/www/webtimeapi/app/Http",
 		"/C/wamp64/www/webtimeapi/app/Http/Controllers",
 		"/C/wamp64/www/webtimeapi/database",
+		"/C/wamp64/www/webtimeapi/public",
 		"/C/wamp64/www/webtimeapi/routes"
 	],
 	"file_history":
@@ -408,19 +425,23 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2244,
+						"buffer_size": 6564,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1912,
-								1912
+								6087,
+								6087
 							]
 						],
 						"settings":
 						{
+							"SL.13.region_keys":
+							[
+								"sublime_linter.protected_regions"
+							],
 							"SL.83.region_keys":
 							[
 								"sublime_linter.protected_regions"
@@ -431,7 +452,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1404.0,
+						"translation.y": 3942.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -443,19 +464,23 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 894,
+						"buffer_size": 899,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								838,
-								838
+								899,
+								899
 							]
 						],
 						"settings":
 						{
+							"SL.14.region_keys":
+							[
+								"sublime_linter.protected_regions"
+							],
 							"SL.85.region_keys":
 							[
 								"sublime_linter.protected_regions"
@@ -578,7 +603,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 241.0,
+	"side_bar_width": 233.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
