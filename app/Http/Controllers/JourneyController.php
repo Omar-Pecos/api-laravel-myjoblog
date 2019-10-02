@@ -7,6 +7,7 @@ use App\Helpers\JwtAuth;
 use Illuminate\Support\Facades\DB;
 use App\ActiveJourney;
 use App\Journey;
+use App\User;
 
 class JourneyController extends Controller
 {
@@ -15,76 +16,103 @@ class JourneyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $hash = $request->header('Authorization',null);
+        $JwtAuth = new JwtAuth();
+        $checkToken = $JwtAuth->checkToken($hash);
+
+        if ($checkToken){
+             $user = $JwtAuth->checkToken($hash,true);
+
+             if ($user->role == 'user'){
+                 $data = [
+                        'status' => 'error',
+                        'message' => 'No tiene permisos para realizar ese procedimiento',
+                    ];
+
+                     return response()->json($data, 200);
+             }
+
+             //  mirar como filtrar por eloquent y por dos variables $orden y $campo_Ordenacion --> ver el APi 5.4 como hacia pa filtrar y el paginado !!!
+             $journeys = Journey::all();
+
+             $data = [
+                'status' => 'success',
+                'journeys' =>$journeys,
+             ];
+        }else{
+            $data = [
+                'status' => 'error',
+                'message' => 'No autenticado',
+                'auth' =>0
+            ];
+        } 
+         
+        return response()->json($data, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
+     * Display the specified resource.  --- EN MI CASO DEVUELVE LAS JORNADAS DE UN USER LOGUEADO!
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+
+    // se puede renombra este metodo como miJourneys o algo así y si se necesita el show para el detalle de jornadas -> con toda la info ahí y con lo de inspeccionaar ?? igual es más limpio que en una tablar ahi !! bueno mirar ******
+    public function show($id, Request $request)
     {
-        //
+         $hash = $request->header('Authorization',null);
+        $JwtAuth = new JwtAuth();
+        $checkToken = $JwtAuth->checkToken($hash);
+
+        if ($checkToken){
+             $user = $JwtAuth->checkToken($hash,true);
+
+             if ($user->role == 'user' && $user->sub != $id){
+                 $data = [
+                        'status' => 'error',
+                        'message' => 'No tiene permisos para realizar ese procedimiento',
+                    ];
+
+                     return response()->json($data, 200);
+             }
+
+             //  coje las jornadas del id del user que se pasa por url
+           /*  $journeys = Journey::where('user_id', $id)
+                        ->get();*/
+
+            $usuario = User::find($id);
+
+            if (!$usuario){
+                 $data = [
+                        'status' => 'error',
+                        'message' => 'No existen registros para ese usuario',
+                    ];
+
+                     return response()->json($data, 200);
+             }
+
+            // validar que el id exista !!
+
+            $journeys = $usuario->journeys;
+
+             $data = [
+                'status' => 'success',
+                'journeys' =>$journeys,
+             ];
+        }else{
+            $data = [
+                'status' => 'error',
+                'message' => 'No autenticado',
+                'auth' =>0
+            ];
+        } 
+         
+        return response()->json($data, 200);
     }
+
 
     /*$hash = $request->header('Authorization',null);
         $JwtAuth = new JwtAuth();
@@ -247,7 +275,7 @@ class JourneyController extends Controller
              $data = [
                 'status' => 'error',
                 'message' => 'No autenticado',
-                'auth' =>0
+                'auth' => 0
             ];
         }
 

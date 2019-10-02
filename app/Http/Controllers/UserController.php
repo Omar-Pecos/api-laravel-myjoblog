@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Helpers\JwtAuth;
-use Illuminate\Support\Facades\DB;
 use App\User;
+use App\Helpers\JwtAuth;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 
 class UserController extends Controller
@@ -15,31 +16,45 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $hash = $request->header('Authorization',null);
+        $JwtAuth = new JwtAuth();
+        $checkToken = $JwtAuth->checkToken($hash);
+
+        if ($checkToken){
+            $user = $JwtAuth->checkToken($hash,true);
+
+            if ($user->role == 'user'){
+                 $data = [
+                        'status' => 'error',
+                        'message' => 'No tiene permisos para realizar ese procedimiento',
+                    ];
+
+                     return response()->json($data, 200);
+            }
+
+        $users = User::all();
+
+            $data = [
+                'status' => 'success',
+                'users' => $users
+            ];
+
+
+        }else{
+            $data = [
+                'status' => 'error',
+                'message' => 'No autenticado',
+                'auth' =>0
+            ];
+        } 
+         
+        return response()->json($data, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+   
+    
 
     /**
      * Display the specified resource.
@@ -47,21 +62,53 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id , Request $request) // mis datos para editar o detalle ,
     {
-        //
+        $hash = $request->header('Authorization',null);
+        $JwtAuth = new JwtAuth();
+        $checkToken = $JwtAuth->checkToken($hash);
+
+        if ($checkToken){
+            $user = $JwtAuth->checkToken($hash,true);
+
+            if ($user->role == 'user' && $user->sub != $id){
+                 $data = [
+                        'status' => 'error',
+                        'message' => 'No tiene permisos para realizar ese procedimiento',
+                    ];
+
+                     return response()->json($data, 200);
+            }
+            
+            $usuario = User::find($id);
+
+            if (!$usuario){
+                 $data = [
+                        'status' => 'error',
+                        'message' => 'No existe ese usuario',
+                    ];
+
+                     return response()->json($data, 200);
+             }
+
+            $data = [
+                'status' => 'success',
+                'user' => $usuario
+            ];
+
+
+        }else{
+            $data = [
+                'status' => 'error',
+                'message' => 'No autenticado',
+                'auth' =>0
+            ];
+        } 
+         
+        return response()->json($data, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+   
 
     /**
      * Update the specified resource in storage.
@@ -70,9 +117,86 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id)      
     {
-        //
+         $hash = $request->header('Authorization',null);
+        $JwtAuth = new JwtAuth();
+        $checkToken = $JwtAuth->checkToken($hash);
+
+        if ($checkToken){
+            $user = $JwtAuth->checkToken($hash,true);
+
+            if ($user->role == 'user' && $user->sub != $id){
+                 $data = [
+                        'status' => 'error',
+                        'message' => 'No tiene permisos para realizar ese procedimiento',
+                    ];
+
+                     return response()->json($data, 200);
+            }
+            // coje el valor de User del que quiere ser editado
+            $usuario = User::find($id);
+
+            if (!$usuario){
+                 $data = [
+                        'status' => 'error',
+                        'message' => 'No existe ese usuario',
+                    ];
+
+                     return response()->json($data, 200);
+             }
+
+              //Recoger post
+        $json = $request->input('json',null);
+
+        $params = json_decode($json);
+        $params_array = json_decode($json,true);
+
+        //validar los datos
+            $validate = \Validator::make($params_array,[
+                'name' => 'string|min:3',
+                'surname' =>'string',
+                'number' =>'max:9',
+                'email' =>  Rule::unique('users')->ignore($user->sub),
+                'dni' =>'max:9',
+                'password' =>'confirmed',
+            ]);
+
+            if ($validate->fails()){
+                return response()->json($validate->errors(),400);
+            }
+
+            // igual hay que unsetear el campo ACTIVE SI CAMBIA ? Y EL CAMPO ROLE !!!! 
+              unset($params_array['id']);
+              unset($params_array['created_at']);
+
+               $pwd = hash('sha256',$params->password);
+                $params_array['password'] = $pwd;
+
+              // actualizar el usuario
+              $usuario->update($params_array);
+
+              $data = [
+                'status' => 'success',
+                'user' => $usuario
+            ];
+
+        
+        }else{
+            // Devolver el error no logged
+            $data = [
+                'status' => 'error',
+                'message' => 'No autenticado',
+                'auth' =>0
+            ];
+        }
+
+        return response()->json($data,200);
+
+
+       
+
+
     }
 
     /**
@@ -83,47 +207,58 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // con sus jornadas y elemntos de imagen por supuesto tmb borrados !
+        // pero mas adelante cuando haga dentro de la App para crear tmb y eliminar ! ; 
     }
 
 
-     public function register(Request $request){
+     public function register(Request $request){   // devuelve los errors a pelo ahi { 'name' => 'debe ser ..' }
         //Recoger post
         $json = $request->input('json',null);
 
         $params = json_decode($json);
+        $params_array = json_decode($json,true);
 
-        $name = (!is_null($json) && isset($params->name)) ? $params->name : null;
+      /*  $name = (!is_null($json) && isset($params->name)) ? $params->name : null;
         $surname = (!is_null($json) && isset($params->surname)) ? $params->surname : null;
         $number = (!is_null($json) && isset($params->number)) ? $params->number : null;
         $email = (!is_null($json) && isset($params->email)) ? $params->email : null;
         $dni = (!is_null($json) && isset($params->dni)) ? $params->dni : null;
         $role = 'user';
-        $password = (!is_null($json) && isset($params->password)) ? $params->password : null;
+        $password = (!is_null($json) && isset($params->password)) ? $params->password : null;*/
 
-        // esto se puede pasar por un validator de data y las rules y si es obj validate is ok -> continua sino saca los errores del validate !
-       
+        //validar los datos
+            $validate = \Validator::make($params_array,[
+                'name' => 'required|string|min:3',
+                'surname' =>'required|string',
+                'number' =>'max:9',
+                'email' =>'email|required',
+                'dni' =>'required|max:9',
+                'password' =>'required|confirmed',
+            ]);
 
-        if (!is_null($email) && !is_null($password) && !is_null($name) && !is_null($surname) && !is_null($dni)){
+            if ($validate->fails()){
+                return response()->json($validate->errors(),400);
+            }
 
             //Crear el usuario 
             $user = new User();
 
-            $user->name = $name;
-            $user->surname = $surname;
-           
-            $user->number = $number;
-             $user->email = $email;
-             $user->dni = $dni;
-            $user->role = $role;
+            $user->name = $params->name;
+            $user->surname = $params->surname;
+            $user->number = $params->number;
+             $user->email = $params->email;
+             $user->dni = $params->dni;
+            $user->role = 'user';
             $user->active = 1;
 
-            $pwd = hash('sha256',$password);
+            $pwd = hash('sha256',$params->password);
             $user->password = $pwd;
 
             // Comprobar usuarios duplicados
-            $isset_user = User::where('email','=',$email)
+            $isset_user = User::where('email','=',$params->email)
                 ->get();
+
             if (count($isset_user) == 0){
                 //Guardarlo
                 $user->save();
@@ -131,23 +266,14 @@ class UserController extends Controller
                 $data = array(
               'status' => 'success',
               'code' => 200,
-              'message' => 'Usuario registrado correctamente'
-            );
-
-            }else{
+              'message' => 'Usuario registrado correctamente');
+            }
+            else{
                 $data = array(
               'status' => 'error',
               'code' => 400,
-              'message' => 'Usuario duplicado, no puede registrarse'
-            );
-            }
-
-        }else{
-            $data = array(
-              'status' => 'error',
-              'code' => 400,
-              'message' => 'Usuario no creado'
-            );
+              'message' => 'Usuario duplicado, ya existe una cuenta con ese correo'
+            );   
         }
 
         return response()->json($data,200);

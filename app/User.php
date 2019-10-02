@@ -44,7 +44,7 @@ class User extends Authenticatable
     }
 
     public function journeys(){
-        return $this->hasMany('App\ActiveJourney');
+        return $this->hasMany('App\Journey');
     }
 
 }

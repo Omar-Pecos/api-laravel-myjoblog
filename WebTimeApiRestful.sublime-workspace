@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"para",
+				"$params_array〔variable〕"
+			],
+			[
+				"jso",
+				"json"
+			],
+			[
+				"json",
+				"json_decode"
+			],
+			[
+				"jor",
+				"journey"
+			],
+			[
+				"journ",
+				"journeys"
+			],
+			[
+				"jou",
+				"journeys"
+			],
+			[
 				"A",
 				"$Ajornada〔variable〕"
 			],
@@ -144,10 +168,6 @@
 				"$data〔variable〕"
 			],
 			[
-				"para",
-				"$params〔variable〕"
-			],
-			[
 				"req",
 				"request"
 			],
@@ -170,10 +190,6 @@
 			[
 				"var",
 				"var_dump〔function〕"
-			],
-			[
-				"jso",
-				"$json〔variable〕"
 			],
 			[
 				"jos",
@@ -220,10 +236,6 @@
 				"$name〔variable〕"
 			],
 			[
-				"json",
-				"json_decode〔function〕"
-			],
-			[
 				"miap",
 				"miapi"
 			]
@@ -235,16 +247,33 @@
 			"file": "app/Http/Controllers/JourneyController.php",
 			"settings":
 			{
-				"buffer_size": 6564,
+				"buffer_size": 8366,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/Http/Controllers/UserController.php",
+			"settings":
+			{
+				"buffer_size": 9187,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "$hash = $request->header('Authorization',null);\n        $JwtAuth = new JwtAuth();\n        $checkToken = $JwtAuth->checkToken($hash);\n\n        if ($checkToken){\n            $user = $JwtAuth->checkToken($hash,true);\n\n            if ($user->role =='user'){\n                 $data = [\n                        'status' => 'error',\n                        'message' => 'No tiene permisos para realizar ese procedimiento',\n                    ];\n\n                     return response()->json($data, 200);\n            }\n\n\n\n\n        }else{\n            $data = [\n                'status' => 'error',\n                'message' => 'No autenticado',\n                'auth' =>0\n            ];\n        } \n         \n        return response()->json($data, 200);",
+			"settings":
+			{
+				"buffer_size": 744,
+				"line_ending": "Windows"
 			}
 		},
 		{
 			"file": "routes/api.php",
 			"settings":
 			{
-				"buffer_size": 899,
+				"buffer_size": 992,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -313,8 +342,8 @@
 	],
 	"file_history":
 	[
-		"/C/wamp64/www/webtimeapi/app/Helpers/JwtAuth.php",
 		"/C/wamp64/www/webtimeapi/app/User.php",
+		"/C/wamp64/www/webtimeapi/app/Helpers/JwtAuth.php",
 		"/C/wamp64/www/webtimeapi/app/Http/Controllers/UserController.php",
 		"/C/wamp64/www/webtimeapi/app/Providers/JwtAuthServiceProvider.php",
 		"/C/wamp64/www/webtimeapi/config/app.php",
@@ -416,7 +445,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -425,15 +454,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6564,
+						"buffer_size": 8366,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6087,
-								6087
+								2825,
+								2825
 							]
 						],
 						"settings":
@@ -452,27 +481,100 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3942.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "routes/api.php",
+					"file": "app/Http/Controllers/UserController.php",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 899,
+						"buffer_size": 9187,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								899,
-								899
+								4647,
+								4647
+							]
+						],
+						"settings":
+						{
+							"SL.14.region_keys":
+							[
+								"sublime_linter.protected_regions"
+							],
+							"SL.18.region_keys":
+							[
+								"sublime_linter.protected_regions"
+							],
+							"auto_complete": false,
+							"syntax": "Packages/PHP/PHP.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2344.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 744,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								744,
+								744
+							]
+						],
+						"settings":
+						{
+							"SL.19.region_keys":
+							[
+							],
+							"auto_complete": false,
+							"default_dir": "C:\\wamp64\\www\\webtimeapi\\app\\Http\\Controllers",
+							"syntax": "Packages/PHP/PHP.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "routes/api.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 992,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								992,
+								992
 							]
 						],
 						"settings":
@@ -489,10 +591,10 @@
 							"syntax": "Packages/PHP/PHP.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 162.4,
+						"translation.y": 90.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
