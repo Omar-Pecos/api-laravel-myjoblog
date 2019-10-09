@@ -7,9 +7,12 @@ use App\Helpers\JwtAuth;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\ApiController;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 
-class UserController extends Controller
+class UserController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -26,31 +29,48 @@ class UserController extends Controller
             $user = $JwtAuth->checkToken($hash,true);
 
             if ($user->role == 'user'){
-                 $data = [
+                /* $data = [
                         'status' => 'error',
                         'message' => 'No tiene permisos para realizar ese procedimiento',
                     ];
-
-                     return response()->json($data, 200);
+                     return response()->json($data, 200);*/
+                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',401);
             }
 
-        $users = User::all();
 
-            $data = [
+        // Si hay una búsqueda !! --->>> BUSQUEDA <<<<<----
+        if (request()->has('search') && request()->has('field')){
+            $search = request()->search;
+            $field = request()->field;
+
+           $users = DB::table('users')
+                    ->Where($field, 'like', '%' . $search . '%')
+                    ->get(['id','name','surname','number','email','dni','role','active','created_at','updated_at']);
+
+        }
+        else{
+           // saca los datos con todo OK !!
+             $users = User::all();
+        }
+          /*  $data = [
                 'status' => 'success',
                 'users' => $users
-            ];
+            ];*/
 
+          return $this->showAll($users,'users');
 
         }else{
-            $data = [
+           /* $data = [
                 'status' => 'error',
                 'message' => 'No autenticado',
                 'auth' =>0
             ];
+
+             return response()->json($data, 200);*/
+            return $this->errorResponse('No autenticado',409);
         } 
          
-        return response()->json($data, 200);
+       
     }
 
    
@@ -72,40 +92,41 @@ class UserController extends Controller
             $user = $JwtAuth->checkToken($hash,true);
 
             if ($user->role == 'user' && $user->sub != $id){
-                 $data = [
+                /* $data = [
                         'status' => 'error',
                         'message' => 'No tiene permisos para realizar ese procedimiento',
-                    ];
+                    ];*/
 
-                     return response()->json($data, 200);
+                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',401);
             }
             
             $usuario = User::find($id);
 
             if (!$usuario){
-                 $data = [
+                /* $data = [
                         'status' => 'error',
                         'message' => 'No existe ese usuario',
-                    ];
+                    ];*/
 
-                     return response()->json($data, 200);
+                     return $this->errorResponse('No existe ese usuario',404);
              }
 
-            $data = [
+           /* $data = [
                 'status' => 'success',
                 'user' => $usuario
-            ];
+            ];*/
 
+               return $this->showOne($usuario,'user');
 
         }else{
-            $data = [
+           /* $data = [
                 'status' => 'error',
                 'message' => 'No autenticado',
                 'auth' =>0
-            ];
+            ];*/
+             return $this->errorResponse('No autenticado',409);
         } 
          
-        return response()->json($data, 200);
     }
 
    
@@ -127,23 +148,23 @@ class UserController extends Controller
             $user = $JwtAuth->checkToken($hash,true);
 
             if ($user->role == 'user' && $user->sub != $id){
-                 $data = [
+               /*  $data = [
                         'status' => 'error',
                         'message' => 'No tiene permisos para realizar ese procedimiento',
-                    ];
+                    ];*/
 
-                     return response()->json($data, 200);
+                  return $this->errorResponse('No tiene permisos para realizar ese procedimiento',401);
             }
             // coje el valor de User del que quiere ser editado
             $usuario = User::find($id);
 
             if (!$usuario){
-                 $data = [
+                /* $data = [
                         'status' => 'error',
                         'message' => 'No existe ese usuario',
-                    ];
+                    ];*/
 
-                     return response()->json($data, 200);
+                     return $this->errorResponse('No existe ese usuario',404);
              }
 
               //Recoger post
@@ -170,32 +191,31 @@ class UserController extends Controller
               unset($params_array['id']);
               unset($params_array['created_at']);
 
-               $pwd = hash('sha256',$params->password);
+              if (isset($params->password)){
+                $pwd = hash('sha256',$params->password);
                 $params_array['password'] = $pwd;
-
+              }
+               
               // actualizar el usuario
               $usuario->update($params_array);
 
-              $data = [
+            /*  $data = [
                 'status' => 'success',
                 'user' => $usuario
-            ];
+            ];*/
 
+             return $this->showOne($usuario,'user');
         
         }else{
             // Devolver el error no logged
-            $data = [
+           /* $data = [
                 'status' => 'error',
                 'message' => 'No autenticado',
                 'auth' =>0
-            ];
+            ];*/
+
+             return $this->errorResponse('No autenticado',409);
         }
-
-        return response()->json($data,200);
-
-
-       
-
 
     }
 
@@ -210,7 +230,6 @@ class UserController extends Controller
         // con sus jornadas y elemntos de imagen por supuesto tmb borrados !
         // pero mas adelante cuando haga dentro de la App para crear tmb y eliminar ! ; 
     }
-
 
      public function register(Request $request){   // devuelve los errors a pelo ahi { 'name' => 'debe ser ..' }
         //Recoger post
@@ -246,7 +265,7 @@ class UserController extends Controller
 
             $user->name = $params->name;
             $user->surname = $params->surname;
-            $user->number = $params->number;
+            $user->number = isset($params->number) ? $params->number : null ;
              $user->email = $params->email;
              $user->dni = $params->dni;
             $user->role = 'user';
@@ -263,20 +282,22 @@ class UserController extends Controller
                 //Guardarlo
                 $user->save();
 
-                $data = array(
+              /*  $data = array(
               'status' => 'success',
               'code' => 200,
-              'message' => 'Usuario registrado correctamente');
+              'message' => 'Usuario registrado correctamente');*/
+
+              return $this->showOne('Usuario Registrado','message');
             }
             else{
-                $data = array(
+              /*  $data = array(
               'status' => 'error',
               'code' => 400,
               'message' => 'Usuario duplicado, ya existe una cuenta con ese correo'
-            );   
-        }
+            );   */
 
-        return response()->json($data,200);
+            return $this->errorResponse('Usuario duplicado, ya existe una cuenta con ese correo',409);
+        }
 
     }
 
@@ -307,14 +328,15 @@ class UserController extends Controller
 
         }else{
 
-            $signup = array(
+           /* $signup = array(
                 'status' => 'error',
                 'message' => 'Envia tus datos por post'
-            );
+            );*/
+
+            // en verda no si si es este error o tal *PENDIENTE
+             return $this->errorResponse('Envia tus datos por post',405);
         }
 
-        return response()->json($signup,200);
-
-        
+        return response()->json($signup,200);    
     }
 }

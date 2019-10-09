@@ -38,6 +38,29 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    // Mutators 
+    public function setNameAttribute($valor){
+        $this->attributes['name'] = strtolower($valor);
+    }
+    public function setSurnameAttribute($valor){
+        $this->attributes['surname'] = strtolower($valor);
+    }
+    public function setEmailAttribute($valor){
+        $this->attributes['email'] = strtolower($valor);
+    }
+
+    // Accessors
+    public function getNameAttribute($valor){
+      
+       return ucwords($valor);
+    }
+    public function getSurnameAttribute($valor){
+      
+       return ucwords($valor);
+    }
+
+
+
      public function active_journey()
     {
         return $this->hasOne('App\ActiveJourney');
