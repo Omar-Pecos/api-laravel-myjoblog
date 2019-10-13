@@ -38,6 +38,9 @@ class JourneyController extends ApiController
 
 
               //  --->>> BUSQUEDA <<<<<----
+             //     SERÍA BUENO SANITIZAR ante un SQL INJECTION 
+                            // esto para quitar las tags de php y html 
+                        // strip_tags ( $str [, string $allowable_tags ] ) 
             if (request()->has('search') && request()->has('field')){
                 $search = request()->search;
                 $field = request()->field;
@@ -192,22 +195,25 @@ class JourneyController extends ApiController
                     // $name= $id.$user->name;
                    // setcookie($name, time(),time()+60*60*24*30*12,"/");
 
+
+                         $time = time();
+
                          // saca la imagen en base64 y la almacena en el storage !!
                         $image_data = $params->image;
 
                             $imageInfo = explode(";base64,", $image_data);
                             $imgExt = str_replace('data:image/', '', $imageInfo[0]);      
                             $image = str_replace(' ', '+', $imageInfo[1]);
-                            $imageName = "sign".$user->sub."_".time().".".$imgExt;
+                            $imageName = "sign".$user->sub."_".$time.".".$imgExt;
                             Storage::disk('images')->put($imageName, base64_decode($image));
                             
 
                     $active_journey = new ActiveJourney();
-                    $time = time();
+                   
 
                     // el user de jwt devuelve menos info ID == SUB
                     $active_journey->user_id = $user->sub;
-                    $active_journey->date = date('Y-m-d H:i:s',$time);
+                    $active_journey->date = date('Y-m-d',$time);
                     $active_journey->initial_time = $time;
                     $active_journey->initial_pos = $pos_inicial;
                     $active_journey->signature =$imageName;
@@ -232,6 +238,96 @@ class JourneyController extends ApiController
 
                     return $this->errorResponse('No autenticado',409);
                 }
+        }
+
+
+        public function pause_journey(Request $request){
+             // verificar token con el hash
+            $hash = $request->header('Authorization',null);
+            $JwtAuth = new JwtAuth();
+            $checkToken = $JwtAuth->checkToken($hash);
+
+
+                        if ($checkToken){
+
+                           // recoge el user   
+                            $user = $JwtAuth->checkToken($hash,true);
+
+                            //coje la jornada activa 
+
+                             $Ajornada = ActiveJourney::where('user_id','=',$user->sub)->first();
+
+                             if (is_null($Ajornada->stops)){
+                                  $data = array(
+                                      '0' => time() 
+                                  );
+
+                                  $dataencoded = json_encode($data,JSON_FORCE_OBJECT);
+                                  
+                             }else{
+                                   $data = json_decode($Ajornada->stops,true);
+                                   $num_paradas = count($data);
+
+                                   //$data[$num_paradas] = time();
+                                   $data += [$num_paradas => time()];
+
+                                    $dataencoded = json_encode($data,JSON_FORCE_OBJECT);
+                             }
+
+                              $Ajornada->paused = 1;
+                              $Ajornada->stops = $dataencoded;
+
+                              $Ajornada->save();
+
+                              return $this->showOne($Ajornada,'active_paused_journey');
+
+                        }else{
+
+                              return $this->errorResponse('No autenticado',409);
+                    }
+        }
+
+        public function continue_journey(Request $request){
+             // verificar token con el hash
+            $hash = $request->header('Authorization',null);
+            $JwtAuth = new JwtAuth();
+            $checkToken = $JwtAuth->checkToken($hash);
+
+
+                        if ($checkToken){
+
+                           // recoge el user   
+                            $user = $JwtAuth->checkToken($hash,true);
+
+                            //coje la jornada activa 
+
+                             $Ajornada = ActiveJourney::where('user_id','=',$user->sub)->first();
+
+                             $time_NOW = time();
+
+                             $time_lost = $Ajornada->time_lost;
+
+                             if (is_null($Ajornada->stops)){
+                                 $time_lost = 0;
+                             }else{
+                                   $data = json_decode($Ajornada->stops,true);
+                                  
+                                  foreach ($data as $clave => $valor) {
+                                          $time_lost += ($time_NOW - $valor);
+                                       }
+                             }
+
+                              $Ajornada->paused = 0;
+                              $Ajornada->time_lost = $time_lost;
+
+                              $Ajornada->save();
+
+                              return $this->showOne($Ajornada,'active_continued_journey');
+
+                        }else{
+
+                              return $this->errorResponse('No autenticado',409);
+                    }
         }
 
         public function end_journey(Request $request){
@@ -288,11 +384,14 @@ class JourneyController extends ApiController
                         // el user de jwt devuelve menos info ID == SUB
                         $journey->user_id = $user->sub;
                         $journey->date = $Ajornada->date;
-                        $journey->initial_time = date('Y-m-d H:i:s',$Ajornada->initial_time);
-                        $journey->final_time = date('Y-m-d H:i:s',$now);
+                        $journey->initial_time = date('H:i:s',$Ajornada->initial_time);
+                        $journey->final_time = date('H:i:s',$now);
                         $journey->initial_pos = $Ajornada->initial_pos;
                         $journey->final_pos = $pos_final;
-                        $journey->time = $Ttime;
+                        // quitandole el tiempo de las paradas
+                        $journey->time = $Ttime - $Ajornada->time_lost;
+
+                        $journey->stops = $Ajornada->stops;
                         $journey->signature = $Ajornada->signature;
 
                         $journey->save();
@@ -334,20 +433,26 @@ class JourneyController extends ApiController
             $jornada = ActiveJourney::where('user_id',$user->sub)->get();
 
             if (count($jornada) == 1){
-                /* $data = [
-                    'status' => 'success',
-                    'journey' => true
-                ];*/
+                
                 $value = true;
+
+                if ($jornada->paused == 0){
+                    $paused = false;
+                }else if ($jornada->paused == 1){
+                    $paused = true;
+                }
             }else if (count($jornada) == 0){
-               /* $data = [
-                    'status' => 'success',
-                    'journey' => false
-                ];*/
+               
                 $value = false;
+                 $paused = false;
             }
 
-             return $this->showOne($value,'journey');
+             $data = [
+                    'status' => 'success',
+                    'journey' => $value,
+                    'paused' => $paused
+                ];
+             return response()->json($data,200);
 
           
         }else{

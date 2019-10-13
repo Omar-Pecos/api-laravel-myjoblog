@@ -23,14 +23,17 @@ Route::post('/register','UserController@register')->middleware('cors');
 Route::post('/login','UserController@login')->middleware('cors');
 
 // Jornadas 
-Route::resource('/journeys','JourneyController',['except' =>'create','store','edit','update','destroy']);
+Route::resource('/journeys','JourneyController',['except' =>'create','store','edit','update','destroy'])->middleware('cors');
 
 Route::post('/init_journey','JourneyController@init_journey')->middleware('cors');
+Route::get('/pause_journey','JourneyController@pause_journey')->middleware('cors');
+Route::get('/continue_journey','JourneyController@continue_journey')->middleware('cors');
 Route::post('/end_journey','JourneyController@end_journey')->middleware('cors');
 Route::get('/has_journey','JourneyController@hasactivejourney')->middleware('cors');
 
+
 // Usuarios
-Route::resource('/users','UserController',['except' =>'create','edit','store']);
+Route::resource('/users','UserController',['except' =>'create','edit','store'])->middleware('cors');
 
 
 // Image controller 

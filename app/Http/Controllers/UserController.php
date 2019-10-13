@@ -39,14 +39,28 @@ class UserController extends ApiController
 
 
         // Si hay una búsqueda !! --->>> BUSQUEDA <<<<<----
+             //     SERÍA BUENO SANITIZAR ante un SQL INJECTION 
+                            // esto para quitar las tags de php y html 
+                        // strip_tags ( $str [, string $allowable_tags ] ) 
+
         if (request()->has('search') && request()->has('field')){
             $search = request()->search;
             $field = request()->field;
 
-           $users = DB::table('users')
+          $users = DB::table('users')
                     ->Where($field, 'like', '%' . $search . '%')
                     ->get(['id','name','surname','number','email','dni','role','active','created_at','updated_at']);
 
+          // COMO HACEN MIS ACCESORES
+           foreach ($users as $user) {
+              $user->name = ucfirst($user->name);
+              $user->surname = ucwords($user->surname);
+            }
+                    /* Consulta insegura ante SQL injection
+                    $users = DB::table('users')
+                        ->whereRaw('dni ='.$search, [200])
+                        ->get();
+                   */
         }
         else{
            // saca los datos con todo OK !!

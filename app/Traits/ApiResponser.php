@@ -9,14 +9,20 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 trait ApiResponser{
 
+	protected $order = 'asc';
+	protected $sort_by = 'id';
+
 	// Si implementamos ya las funciones de successResponse y ErrorResponse mejor la vd !! 
 
 	private function successResponse($data,$name,$code){
 		
 		$datos = [
 			'status' =>'success',
-			$name =>$data
+			$name =>$data,
+			'order' =>$this->order,
+			'sort_by' =>$this->sort_by
 		];
+
 		return response()->json($datos,$code);
 	}
 
@@ -42,7 +48,7 @@ trait ApiResponser{
 		return $this->successResponse($collection,$name,$code);
 	}
 
-	protected function showOne(Collection $collection,$name,$code=200){
+	protected function showOne(Model $collection,$name,$code=200){
 		return $this->successResponse($collection,$name,$code);
 	}
 
@@ -60,8 +66,11 @@ trait ApiResponser{
 						if ($order == 'asc'){
 							$collection = $collection->sortBy->{$sort_by};
 						}else if ($order == 'desc'){
-							$collection = $collection->sortByDesc->{$sort_by};						
-						}		
+							$collection = $collection->sortByDesc->{$sort_by};
+						}	
+
+						$this->order = $order;
+						$this->sort_by = $sort_by;
 				}
 			
 			return $collection;
