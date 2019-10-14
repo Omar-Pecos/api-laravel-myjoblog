@@ -16,6 +16,8 @@ class ImageController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+   
+
     public function getImage($name , Request $request){
 
     	 $hash = $request->header('Authorization',null);

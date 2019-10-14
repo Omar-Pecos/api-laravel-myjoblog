@@ -36,5 +36,14 @@ Route::get('/has_journey','JourneyController@hasactivejourney')->middleware('cor
 Route::resource('/users','UserController',['except' =>'create','edit','store'])->middleware('cors');
 
 
+// Job Controller
+
+Route::get('/pdf', 'JobController@processQueue');
+
+
+
+
+
 // Image controller 
 Route::get('/getimage/{name}','ImageController@getImage')->middleware('cors');
+
