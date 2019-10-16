@@ -46,7 +46,7 @@
 					table{
 						width: 100%;
 						border-collapse: collapse;
-						margin-right: 15px;
+						margin-right: 10px;
 					}
 					#filacabecera{
 						background-color:  #5cb85c;
@@ -82,11 +82,7 @@
 
 				$num =  count($journeys);
 
-				$red = 'red';
-				$blue = 'blue';
-				$green = 'green';
-
-				$a = ['#ff0000','#00ff00','#0000ff'];
+				$a = ['#FE6F5E','#FBE274','#6D9B51','#263E51','#4EE787','#EF85BB','#C7732A'];
 
 			?>
 

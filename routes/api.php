@@ -36,9 +36,20 @@ Route::get('/has_journey','JourneyController@hasactivejourney')->middleware('cor
 Route::resource('/users','UserController',['except' =>'create','edit','store'])->middleware('cors');
 
 
+
+// Pdf Controller
+
+Route::get('/get_trigger', 'PdfController@getTrigger')->middleware('cors');
+Route::post('/set_trigger', 'PdfController@setTrigger')->middleware('cors');
+
+Route::get('/get_files', 'PdfController@getMyFiles')->middleware('cors');
+Route::get('/see_file', 'PdfController@seeFile')->middleware('cors');
+Route::get('/down_file', 'PdfController@downloadFile')->middleware('cors');
+Route::get('/delete_file', 'PdfController@deleteFile')->middleware('cors');
+
 // Job Controller
 
-Route::get('/pdf', 'JobController@processQueue');
+Route::get('/pdf', 'JobController@processQueue')->middleware('cors');
 
 
 

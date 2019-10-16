@@ -2,27 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\JwtAuth;
 use App\Jobs\GeneratePdf;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ApiController;
 
-class JobController extends Controller
+class JobController extends ApiController
 {
     /**
      * Handle Queue Process
      */
     public function processQueue(Request $request)
     {
+       $hash = $request->header('Authorization',null);
+        $JwtAuth = new JwtAuth();
+        $checkToken = $JwtAuth->checkToken($hash);
 
-    	$id = request()->id;
-    	$year = request()->year;
+        if ($checkToken){
+             $user = $JwtAuth->checkToken($hash,true);
 
-   	 $data = ['antes' => time(),
-   	 'msg' => 'Proceso enviado'];
+                  $id = request()->id;
+                  $year = request()->year;
 
-      dispatch(new GeneratePdf($id,$year));
+                  /* una mejor respuesta para sacar la info en infomsg */
+                 $data = ['antes' => time(),
+                 'msg' => 'Proceso enviado'];
 
-      $data ['despues'] = time();
-      
-      return response()->json($data,200);
+                  dispatch(new GeneratePdf($user,$id,$year));
+
+                  $data ['despues'] = time();
+                  
+                  return response()->json($data,200);
+
+         }else{
+  
+         return $this->errorResponse('No autenticado',409);
+    } 
+
+
+    	
     }
 }

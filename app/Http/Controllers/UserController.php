@@ -296,12 +296,20 @@ class UserController extends ApiController
                 //Guardarlo
                 $user->save();
 
+                /* CREA LOS DATOS EN TRIGGER_PDF NOSE SI COGE BIEN EL ID QUE TOCA */
+                    DB::table('trigger_pdf')->insert([
+                        'user_id' => $user->id,
+                        'quantity' => 0,
+                        'id_journeys' => '0',
+                        'done' => 0
+                    ]);
+
               /*  $data = array(
               'status' => 'success',
               'code' => 200,
               'message' => 'Usuario registrado correctamente');*/
 
-              return $this->showOne('Usuario Registrado','message');
+              return $this->showOne($user,'registered');
             }
             else{
               /*  $data = array(

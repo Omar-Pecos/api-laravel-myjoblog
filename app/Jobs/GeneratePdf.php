@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Journey;
 use Spipu\Html2Pdf\Html2Pdf;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,22 +15,24 @@ class GeneratePdf implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $id;
+    protected $user;
+    protected $ids;
     protected $year;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($id,$year)
+    public function __construct($user,$id,$year)
     {
        
          if ($id == "all"){
                 $this->$id = $id;
                 $this->year = $year;
         } 
+         $this->user = $user;
+         $this->ids = json_decode($id,true);
 
-         $this->id = $id;
     }
 
     /**
@@ -41,10 +44,10 @@ class GeneratePdf implements ShouldQueue
     {
         // recoger los datos a pintar
 
-        if ($this->id == 'all'){
+        if ($this->ids == 'all'){
             $journeys = Journey::where('date','like','%'.$this->year.'-%')->orderBy('user_id')->get();
          }else{
-            $journeys = Journey::where('user_id',$this->id)->get();
+            $journeys = Journey::find($this->ids);
          }
         
          foreach ($journeys as $j) {
@@ -59,7 +62,7 @@ class GeneratePdf implements ShouldQueue
         $content = view('print_view',
                     [
                         'journeys' => $journeys,
-                        'all' => $this->id == 'all' ? true : false,
+                        'all' => $this->ids == 'all' ? true : false,
                         'year' => $this->year
 
                 ])->render();
@@ -70,9 +73,24 @@ class GeneratePdf implements ShouldQueue
 
         $html2pdf->WriteHTML($content);
         
-        $time = time();
+        $unixtime = time();
+        $time = date('d_m_y__H_i',$unixtime);
+
+        /* se podria hacer un foreach de las journeys y sacar el date de la primera -> transformarlo a algo mas amenos y saca el el date de la ultima y poner en el FILENAME tmb mejor asi queda claro de que jornadas es ese pdf*/
+
+        $file_name = $this->user->sub.'_'.$this->user->dni.'_pdf_'.$time.'.pdf';
+
+
+        // INSERT A EXPORTS !!!!
+
+            DB::table('exports')->insert([
+                'user_id' => $this->user->sub,
+                'namefile' => $file_name,
+                'datetime' => date("Y-m-d H:i:s",$unixtime),
+                'type' => $this->user->role
+            ]);
         
     //dd(storage_path('app/public/images'));
-        $pdf= $html2pdf->Output(storage_path('app/pdf/').'pdf_time_'.$time.'.pdf', 'F'); // The filename is ignored when you use 'S' as the second parameter.
+        $pdf= $html2pdf->Output(storage_path('app/pdf/').$file_name, 'F'); 
     }
 }

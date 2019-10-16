@@ -30,6 +30,7 @@ class JwtAuth{
 			//genera el token y lo devuelve
 			$token = array(
 				'sub' => $user->id,
+				'dni' => $user->dni,
 				'email'=> $user->email,
 				'name' => $user->name,
 				'surname'=>$user->surname,
