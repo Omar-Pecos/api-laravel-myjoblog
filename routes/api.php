@@ -48,11 +48,12 @@ Route::get('/down_file', 'PdfController@downloadFile')->middleware('cors');
 Route::get('/delete_file', 'PdfController@deleteFile')->middleware('cors');
 
 // Job Controller
-
 Route::get('/pdf', 'JobController@processQueue')->middleware('cors');
 
-
-
+// Journey ( ChartJs data )
+Route::get('/get_chartdata','JourneyController@chart_data')->middleware('cors');
+Route::get('/data_line','JourneyController@chart_line_pormes')->middleware('cors');
+Route::get('/data_donut_porcentage','JourneyController@chart_donut_porcentaje')->middleware('cors');
 
 
 // Image controller 

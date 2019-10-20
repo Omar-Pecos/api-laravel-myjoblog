@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
 
 class JourneyController extends ApiController
 {
@@ -421,7 +422,7 @@ class JourneyController extends ApiController
 
         }
 
-       public function hasactivejourney(Request $request){
+ public function hasactivejourney(Request $request){
         
          $hash = $request->header('Authorization',null);
         $JwtAuth = new JwtAuth();
@@ -432,13 +433,14 @@ class JourneyController extends ApiController
 
             $jornada = ActiveJourney::where('user_id',$user->sub)->get();
 
+
             if (count($jornada) == 1){
                 
                 $value = true;
 
-                if ($jornada->paused == 0){
+                if ($jornada[0]->paused == 0){
                     $paused = false;
-                }else if ($jornada->paused == 1){
+                }else if ($jornada[0]->paused == 1){
                     $paused = true;
                 }
             }else if (count($jornada) == 0){
@@ -468,5 +470,170 @@ class JourneyController extends ApiController
     } 
 
 }
+
+
+
+/* Consulta los datos de un user (del token y devuelve un json con esos datos para cada gráfico) */
+public function chart_data (Request $request){
+
+            $hash = $request->header('Authorization',null);
+            $JwtAuth = new JwtAuth();
+            $checkToken = $JwtAuth->checkToken($hash);
+
+
+                if ($checkToken){
+
+                   // recoge el user   
+                    $user = $JwtAuth->checkToken($hash,true);
+
+                
+                    $time = time();
+                    $diahoy = date('Y-m-d',$time);
+                    $meshoy = date('Y-m-',$time);
+                    $añohoy = date('Y-',$time);
+
+                
+
+                    $jornadaactiva = ActiveJourney::where('user_id',$user->sub)->get();
+                    $jornada = Journey::where('date',$diahoy)->get();
+
+                    $today = 0;
+                    // $semana  es mas chungo porque hay que ver que semana estamos y tal o sea que de momento no !!!
+                    $mes  = Journey::where('date','like','%'.$meshoy.'%')->sum('time');
+                    $año  = Journey::where('date','like','%'.$añohoy.'%')->sum('time');
+
+                    //tiene jornada activa 
+                    if (count($jornadaactiva) == 1){
+                            // TODO -- quedaria quitar tmb el tiempo de las paradas
+                         $today = time()-($jornadaactiva[0]->initial_time);
+
+                         $mes += $today;
+                         $año += $today;
+                    }else{
+                        //tiene jornada finalizada o todavia no la ha hecho
+                        if (count($jornada) == 1){
+                            $today = $jornada[0]->time;
+                        }else if (count($jornada) == 0){
+                            $today = 0;
+                        }
+                    }
+
+
+                    // data porcentajes mios/totales y meses/cantidad de horas totales algo chulo como el de fecht json to charjs
+                    $data = [
+                         'data_dia' =>[
+                                'labels' =>['Horas hoy','Jornada 8 horas'],
+                                'data' =>[($today/60/60),8*60*60]
+                         ],
+                          'data_mes' =>[
+                                'labels' =>['Horas hoy','8 horas/dia en un mes'],
+                                'data' =>[($mes/60/60),8*60*60]
+                         ] ,
+                          'data_año' =>[
+                                'labels' =>['Horas este año','8 horas/dia en un año'],
+                                'data' =>[($año/60/60),8*60*60]
+                         ]        
+                    ];
+
+                    return response()->json($data,200);
+
+
+
+                }else{
+
+                    return $this->errorResponse('No autenticado',409);
+                } 
+
+   
+}
+
+/* DATA PARA EL GRAFICO DE LÍNEA POR MES / HORAS TRABAJADAS */
+public function chart_line_pormes (Request $request){
+
+            $hash = $request->header('Authorization',null);
+            $JwtAuth = new JwtAuth();
+            $checkToken = $JwtAuth->checkToken($hash);
+
+
+                if ($checkToken){
+
+                   // recoge el user   
+                    $user = $JwtAuth->checkToken($hash,true);
+
+                
+                    $time = time();
+                    $añohoy = date('Y-',$time);
+
+                    $meses = [];
+
+                    for ($i = 1;$i<13;$i++){
+                        if ($i < 10 ){
+                            $num = '0'.$i;
+                        }else{
+                            $num = $i;
+                        }
+                        $meses[] = Journey::where('user_id',$user->sub)
+                            ->where('date','like','%'.$añohoy.$num.'-'.'%')
+                            ->sum('time');
+                    }
+
+
+                
+                    $data = [
+                        'status' => 'success',
+                         'data_line' =>$meses    
+                    ];
+
+                    return response()->json($data,200);
+
+
+
+                }else{
+
+                    return $this->errorResponse('No autenticado',409);
+                }  
+}
+
+/* DATA PARA EL GRAFICO DE Donut MISHORAS/HORASTOTALES */
+public function chart_donut_porcentaje (Request $request){
+
+            $hash = $request->header('Authorization',null);
+            $JwtAuth = new JwtAuth();
+            $checkToken = $JwtAuth->checkToken($hash);
+
+
+                if ($checkToken){
+
+                   // recoge el user   
+                    $user = $JwtAuth->checkToken($hash,true);
+
+                   $horastotales = Journey::sum('time');
+                   $mishoras = Journey::where('user_id',$user->sub)->sum('time');
+
+                   if ($horastotales != 0){
+                        $horastotales = $horastotales/60/60;
+                   }
+                    if ($mishoras != 0){
+                        $mishoras = $mishoras/60/60;
+                   }
+                
+                    $data = [
+                        'status' => 'success',
+                         'data_donut' =>[
+                            $mishoras,$horastotales
+                         ]   
+                    ];
+
+                    return response()->json($data,200);
+
+
+
+                }else{
+
+                    return $this->errorResponse('No autenticado',409);
+                }  
+}
+
+
 
 }
