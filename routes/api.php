@@ -54,6 +54,9 @@ Route::get('/pdf', 'JobController@processQueue')->middleware('cors');
 Route::get('/get_chartdata','JourneyController@chart_data')->middleware('cors');
 Route::get('/data_line','JourneyController@chart_line_pormes')->middleware('cors');
 Route::get('/data_donut_porcentage','JourneyController@chart_donut_porcentaje')->middleware('cors');
+Route::get('/data_donut_today','JourneyController@chart_donut_dia')->middleware('cors');
+Route::get('/data_donut_month','JourneyController@chart_donut_mes')->middleware('cors');
+Route::get('/data_donut_year','JourneyController@chart_donut_anio')->middleware('cors');
 
 
 // Image controller 

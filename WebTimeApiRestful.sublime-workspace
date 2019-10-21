@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"jorn",
+				"$jornadaactiva〔variable〕"
+			],
+			[
+				"horas",
+				"$horastotales〔variable〕"
+			],
+			[
+				"año",
+				"añohoy"
+			],
+			[
 				"dia",
 				"$diahoy〔variable〕"
 			],
@@ -359,7 +371,7 @@
 			"file": "app/Http/Controllers/JourneyController.php",
 			"settings":
 			{
-				"buffer_size": 19125,
+				"buffer_size": 29110,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -368,7 +380,8 @@
 			"file": "routes/api.php",
 			"settings":
 			{
-				"buffer_size": 2149,
+				"buffer_size": 2599,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -595,15 +608,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 19125,
+						"buffer_size": 29110,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								18873,
-								18873
+								21903,
+								21903
 							]
 						],
 						"settings":
@@ -613,6 +626,7 @@
 							],
 							"SL.13.region_keys":
 							[
+								"sublime_linter.protected_regions"
 							],
 							"SL.14.region_keys":
 							[
@@ -623,6 +637,10 @@
 							],
 							"SL.33.region_keys":
 							[
+							],
+							"SL.41.region_keys":
+							[
+								"sublime_linter.protected_regions"
 							],
 							"SL.56.region_keys":
 							[
@@ -636,7 +654,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 19891.2,
+						"translation.y": 11363.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -645,29 +663,37 @@
 				{
 					"buffer": 1,
 					"file": "routes/api.php",
-					"semi_transient": true,
+					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2149,
+						"buffer_size": 2599,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								645,
-								645
+								2435,
+								2435
 							]
 						],
 						"settings":
 						{
+							"SL.14.region_keys":
+							[
+							],
+							"SL.42.region_keys":
+							[
+								"sublime_linter.protected_regions"
+							],
 							"SL.61.region_keys":
 							[
 							],
+							"auto_complete": false,
 							"syntax": "Packages/PHP/PHP.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 702.0,
+						"translation.y": 324.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -725,6 +751,9 @@
 							[
 							],
 							"SL.40.region_keys":
+							[
+							],
+							"SL.43.region_keys":
 							[
 							],
 							"SL.48.region_keys":

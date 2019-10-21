@@ -473,7 +473,7 @@ class JourneyController extends ApiController
 
 
 
-/* Consulta los datos de un user (del token y devuelve un json con esos datos para cada gráfico) */
+/* Consulta los datos de un user (del token y devuelve un json con esos datos para cada gráfico) 
 public function chart_data (Request $request){
 
             $hash = $request->header('Authorization',null);
@@ -545,7 +545,7 @@ public function chart_data (Request $request){
                 } 
 
    
-}
+}*/
 
 /* DATA PARA EL GRAFICO DE LÍNEA POR MES / HORAS TRABAJADAS */
 public function chart_line_pormes (Request $request){
@@ -607,13 +607,37 @@ public function chart_donut_porcentaje (Request $request){
                    // recoge el user   
                     $user = $JwtAuth->checkToken($hash,true);
 
+                     $jornadaactiva = ActiveJourney::where('user_id',$user->sub)->get();
+                    $jornada = Journey::where('user_id',$user->sub)
+                                ->where('date',$diahoy)
+                                ->get();
+
                    $horastotales = Journey::sum('time');
                    $mishoras = Journey::where('user_id',$user->sub)->sum('time');
 
-                   if ($horastotales != 0){
+                   $today = 0;
+                   //tiene jornada activa 
+                    if (count($jornadaactiva) == 1){
+                            // TODO -- quedaria quitar tmb el tiempo de las paradas
+                         $today = time()-($jornadaactiva[0]->initial_time);
+
+                         $today -= $jornadaactiva[0]->time_lost;
+                    }else{
+                        //tiene jornada finalizada o todavia no la ha hecho
+                        if (count($jornada) >= 1){
+
+                            foreach ($jornada as $j) {
+                                $today += $j->time;
+                            }
+                        }
+                    }
+
+                    $mishoras += $today;
+
+                   if ($horastotales > 0){
                         $horastotales = $horastotales/60/60;
                    }
-                    if ($mishoras != 0){
+                    if ($mishoras > 0){
                         $mishoras = $mishoras/60/60;
                    }
                 
@@ -634,6 +658,188 @@ public function chart_donut_porcentaje (Request $request){
                 }  
 }
 
+/* DATA PARA EL GRAFICO DE Donut MISHORAS/ 8 horas */
+public function chart_donut_dia (Request $request){
 
+            $hash = $request->header('Authorization',null);
+            $JwtAuth = new JwtAuth();
+            $checkToken = $JwtAuth->checkToken($hash);
+
+
+                if ($checkToken){
+
+                   // recoge el user   
+                    $user = $JwtAuth->checkToken($hash,true);
+
+                    $time = time();
+                    $diahoy = date('Y-m-d',$time);
+
+                    $jornadaactiva = ActiveJourney::where('user_id',$user->sub)->get();
+                    $jornada = Journey::where('user_id',$user->sub)
+                                ->where('date',$diahoy)
+                                ->get();
+
+                    $today = 0;
+
+                    //tiene jornada activa 
+                    if (count($jornadaactiva) == 1){
+                            // TODO -- quedaria quitar tmb el tiempo de las paradas
+                         $today = time()-($jornadaactiva[0]->initial_time);
+
+                         $today -= $jornadaactiva[0]->time_lost;
+                    }else{
+                        //tiene jornada finalizada o todavia no la ha hecho
+                        if (count($jornada) >= 1){
+
+                            foreach ($jornada as $j) {
+                                $today += $j->time;
+                            }
+                           // $today = $jornada[0]->time;
+                        }
+                    }
+
+                    if ($today > 0){
+                        $today = ($today/60/60);
+                    }
+
+                    $data = [
+                         'data_donut' =>
+                                 [ $today,8 ]      
+                    ];
+
+                    return response()->json($data,200);
+
+                }else{
+
+                    return $this->errorResponse('No autenticado',409);
+                }   
+}
+/* DATA PARA EL GRAFICO DE Donut MISHORAS/ 160 horas */
+public function chart_donut_mes (Request $request){
+
+            $hash = $request->header('Authorization',null);
+            $JwtAuth = new JwtAuth();
+            $checkToken = $JwtAuth->checkToken($hash);
+
+
+                if ($checkToken){
+
+                   // recoge el user   
+                    $user = $JwtAuth->checkToken($hash,true);
+ 
+                    $time = time();
+                    $diahoy = date('Y-m-d',$time);
+                    $meshoy = date('Y-m-',$time);
+
+                    $jornadaactiva = ActiveJourney::where('user_id',$user->sub)->get();
+                     $jornada = Journey::where('user_id',$user->sub)
+                                ->where('date',$diahoy)
+                                ->get();
+
+                    $today = 0;
+                    // $semana  es mas chungo porque hay que ver que semana estamos y tal o sea que de momento no !!!
+                    $mes  = Journey::where('user_id',$user->sub)
+                            ->where('date','like','%'.$meshoy.'%')
+                            ->sum('time');
+
+                    //tiene jornada activa 
+                    if (count($jornadaactiva) == 1){
+                            // TODO -- quedaria quitar tmb el tiempo de las paradas
+                         $today = time()-($jornadaactiva[0]->initial_time);
+                         $today -= $jornadaactiva[0]->time_lost;
+
+                    }else{
+                        //tiene jornada finalizada o todavia no la ha hecho
+                        if (count($jornada) >= 1){
+
+                            foreach ($jornada as $j) {
+                                $today += $j->time;
+                            }
+                           // $today = $jornada[0]->time;
+                        }
+                    }
+
+                    $mes += $today;
+
+                    if ($mes > 0){
+                        $mes = ($mes/60/60);
+                    }
+
+                    $data = [
+                         'data_donut' =>
+                                 [ $mes,16 ]     // 160  
+                    ];
+
+                    return response()->json($data,200);
+
+                }else{
+
+                    return $this->errorResponse('No autenticado',409);
+                }   
+}
+
+/* DATA PARA EL GRAFICO DE Donut MISHORAS/ 160 horas */
+public function chart_donut_anio (Request $request){
+
+            $hash = $request->header('Authorization',null);
+            $JwtAuth = new JwtAuth();
+            $checkToken = $JwtAuth->checkToken($hash);
+
+
+                if ($checkToken){
+
+                   // recoge el user   
+                    $user = $JwtAuth->checkToken($hash,true);
+ 
+                    $time = time();
+                    $diahoy = date('Y-m-d',$time);
+                    $añohoy = date('Y-',$time);
+
+                    $jornadaactiva = ActiveJourney::where('user_id',$user->sub)->get();
+                    $jornada = Journey::where('user_id',$user->sub)
+                                ->where('date',$diahoy)
+                                ->get();
+
+                    $today = 0;
+                   
+                    $año  = Journey::where('user_id',$user->sub)
+                            ->where('date','like','%'.$añohoy.'%')
+                            ->sum('time');
+
+                    //tiene jornada activa 
+                    if (count($jornadaactiva) == 1){
+                            // TODO -- quedaria quitar tmb el tiempo de las paradas
+                         $today = time()-($jornadaactiva[0]->initial_time);
+                         $today -= $jornadaactiva[0]->time_lost;
+
+                    }else{
+                        //tiene jornada finalizada o todavia no la ha hecho
+                        if (count($jornada) >= 1){
+
+                            foreach ($jornada as $j) {
+                                $today += $j->time;
+                            }
+                           // $today = $jornada[0]->time;
+                        }
+                    }
+
+                    $año += $today;
+
+                    if ($año > 0){
+                        $año = ($año/60/60);
+                    }
+
+                    $data = [
+                         'data_donut' =>
+                                 [ $año,26 ]   //1826   
+                    ];
+
+                    return response()->json($data,200);
+
+                }else{
+
+                    return $this->errorResponse('No autenticado',409);
+                }   
+   }
 
 }
