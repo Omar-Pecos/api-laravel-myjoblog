@@ -254,13 +254,14 @@ class JourneyController extends ApiController
                            // recoge el user   
                             $user = $JwtAuth->checkToken($hash,true);
 
+                            $time = time();
                             //coje la jornada activa 
 
                              $Ajornada = ActiveJourney::where('user_id','=',$user->sub)->first();
 
                              if (is_null($Ajornada->stops)){
                                   $data = array(
-                                      '0' => time() 
+                                      '0' =>  $time
                                   );
 
                                   $dataencoded = json_encode($data,JSON_FORCE_OBJECT);
@@ -270,12 +271,12 @@ class JourneyController extends ApiController
                                    $num_paradas = count($data);
 
                                    //$data[$num_paradas] = time();
-                                   $data += [$num_paradas => time()];
+                                   $data += [$num_paradas =>  $time];
 
                                     $dataencoded = json_encode($data,JSON_FORCE_OBJECT);
                              }
 
-                              $Ajornada->paused = 1;
+                              $Ajornada->paused =  $time;
                               $Ajornada->stops = $dataencoded;
 
                               $Ajornada->save();
@@ -312,10 +313,13 @@ class JourneyController extends ApiController
                                  $time_lost = 0;
                              }else{
                                    $data = json_decode($Ajornada->stops,true);
-                                  
-                                  foreach ($data as $clave => $valor) {
+                                  $num = count($data);
+
+                                  //arregla el error del time_lost
+                                  $time_lost += ($time_NOW - $data[$num-1]);
+                                 /* foreach ($data as $clave => $valor) {
                                           $time_lost += ($time_NOW - $valor);
-                                       }
+                                       }*/
                              }
 
                               $Ajornada->paused = 0;
@@ -433,26 +437,43 @@ class JourneyController extends ApiController
 
             $jornada = ActiveJourney::where('user_id',$user->sub)->get();
 
+            $init = 0;
+            $time_lost = 0;
+            $stops = 0;
 
             if (count($jornada) == 1){
                 
                 $value = true;
 
                 if ($jornada[0]->paused == 0){
-                    $paused = false;
-                }else if ($jornada[0]->paused == 1){
-                    $paused = true;
+                    $paused = 0;
+                }else if ($jornada[0]->paused != 0){
+                    $paused = $jornada[0]->paused;
                 }
+
+                $init = date('H:i:s',$jornada[0]->initial_time);
+                $time_lost = $jornada[0]->time_lost;
+                $stops = json_decode($jornada[0]->stops,true);
             }else if (count($jornada) == 0){
                
                 $value = false;
-                 $paused = false;
+                 $paused = 0;
+            }
+
+            if ($paused != 0){
+                $paused  = (time() - $paused)/60;
+            }
+            if ( $time_lost != 0){
+                $time_lost = $time_lost/60;
             }
 
              $data = [
                     'status' => 'success',
                     'journey' => $value,
-                    'paused' => $paused
+                    'paused' =>$paused,
+                    'init' => $init,
+                    'stops' => $stops,
+                    'time_lost' => $time_lost
                 ];
              return response()->json($data,200);
 
