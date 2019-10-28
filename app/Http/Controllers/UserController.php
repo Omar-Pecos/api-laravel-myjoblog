@@ -87,8 +87,38 @@ class UserController extends ApiController
        
     }
 
-   
-    
+     public function get2first(Request $request)
+    {
+        $hash = $request->header('Authorization',null);
+        $JwtAuth = new JwtAuth();
+        $checkToken = $JwtAuth->checkToken($hash);
+
+        if ($checkToken){
+            $user = $JwtAuth->checkToken($hash,true);
+
+            if ($user->role == 'user'){
+              
+                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',401);
+            }
+
+             $users = User::all()->take(2)->pluck('id');
+       
+              $data = [
+                'status' => 'success',
+                'users' => $users
+              ];
+
+
+          //return $this->showAll($users,'users');
+              return response()->json($data,200);
+
+        }else{
+
+            return $this->errorResponse('No autenticado',409);
+        }   
+       
+    }
+
 
     /**
      * Display the specified resource.

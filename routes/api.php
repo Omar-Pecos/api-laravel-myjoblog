@@ -34,7 +34,8 @@ Route::get('/has_journey','JourneyController@hasactivejourney')->middleware('cor
 
 // Usuarios
 Route::resource('/users','UserController',['except' =>'create','edit','store'])->middleware('cors');
-
+// me da los 2 primeros users ;;;;
+Route::get('/get_first_users', 'UserController@get2first')->middleware('cors');
 
 
 // Pdf Controller
@@ -51,12 +52,12 @@ Route::get('/delete_file', 'PdfController@deleteFile')->middleware('cors');
 Route::get('/pdf', 'JobController@processQueue')->middleware('cors');
 
 // Journey ( ChartJs data )
-Route::get('/get_chartdata','JourneyController@chart_data')->middleware('cors');
-Route::get('/data_line','JourneyController@chart_line_pormes')->middleware('cors');
-Route::get('/data_donut_porcentage','JourneyController@chart_donut_porcentaje')->middleware('cors');
-Route::get('/data_donut_today','JourneyController@chart_donut_dia')->middleware('cors');
-Route::get('/data_donut_month','JourneyController@chart_donut_mes')->middleware('cors');
-Route::get('/data_donut_year','JourneyController@chart_donut_anio')->middleware('cors');
+//Route::get('/get_chartdata','JourneyController@chart_data')->middleware('cors');
+Route::get('/data_line/{id}','JourneyController@chart_line_pormes')->middleware('cors');
+Route::get('/data_donut_porcentage/{id}','JourneyController@chart_donut_porcentaje')->middleware('cors');
+Route::get('/data_donut_today/{id}','JourneyController@chart_donut_dia')->middleware('cors');
+Route::get('/data_donut_month/{id}','JourneyController@chart_donut_mes')->middleware('cors');
+Route::get('/data_donut_year/{id}','JourneyController@chart_donut_anio')->middleware('cors');
 
 
 // Image controller 

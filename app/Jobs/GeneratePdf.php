@@ -50,10 +50,29 @@ class GeneratePdf implements ShouldQueue
             $journeys = Journey::find($this->ids);
          }
         
-         foreach ($journeys as $j) {
+         /*foreach ($journeys as $j) {
                 $j->user_data = $j->user;
                 // $j->load('user');
-             }
+             }*/
+             $string_initial = '';
+             $string_final = '';
+
+             foreach($journeys as $key => $j) {
+                if ($key === 0){
+                    $initial_date =  explode("-", $j->date);
+                    $string_initial = $initial_date[2].'-'.$initial_date[1].'-'.$initial_date[0];
+                }
+
+                 $j->user_data = $j->user;
+
+                if ($key === count($journeys)-1){
+                     $final_date =  explode("-", $j->date);
+                    $string_final = $final_date[2].'-'.$final_date[1].'-'.$final_date[0];
+                }
+            }
+
+            
+            
     
 
       // dd($journeys);
@@ -74,11 +93,10 @@ class GeneratePdf implements ShouldQueue
         $html2pdf->WriteHTML($content);
         
         $unixtime = time();
-        $time = date('d_m_y__H_i',$unixtime);
+        // $time = date('d_m_y__H_i',$unixtime);
+        //$file_name = $this->user->sub.'_'.$this->user->dni.'_pdf_'.$time.'.pdf';
 
-        /* se podria hacer un foreach de las journeys y sacar el date de la primera -> transformarlo a algo mas amenos y saca el el date de la ultima y poner en el FILENAME tmb mejor asi queda claro de que jornadas es ese pdf*/
-
-        $file_name = $this->user->sub.'_'.$this->user->dni.'_pdf_'.$time.'.pdf';
+        $file_name = 'myjoblog_'.$this->user->dni.'_'.$string_initial.'_al_'.$string_final.'.pdf';
 
 
         // INSERT A EXPORTS !!!!

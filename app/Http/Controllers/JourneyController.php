@@ -55,10 +55,16 @@ class JourneyController extends ApiController
                 $journeys = Journey::all();
             }
 
-            /* $data = [
-                'status' => 'success',
-                'journeys' =>$journeys,
-             ];*/
+           // dd($journeys);
+
+             // transforma las posiciones en array para facilitar la lectura en angular--> se puede hacer con un accesor o que direcmente lo guarde como array !! 
+             foreach ($journeys as $j) {
+                 $valorini = $j->initial_pos;
+                 $valorend = $j->final_pos;
+                 $j->initial_pos = json_decode($valorini,true);
+                 $j->final_pos = json_decode($valorend,true);
+                  $j->user_data = $j->user;
+             }
 
              return $this->showAll($journeys,'journeys');
         }else{
@@ -122,6 +128,7 @@ class JourneyController extends ApiController
                     $field = request()->field;
 
                    $journeys = DB::table('journeys')
+                            ->Where('user_id',$id)
                             ->Where($field, 'like', '%' . $search . '%')
                             ->get();
 
@@ -439,15 +446,14 @@ class JourneyController extends ApiController
 
             $init = 0;
             $time_lost = 0;
+            $paused = 0;
             $stops = 0;
 
             if (count($jornada) == 1){
                 
                 $value = true;
 
-                if ($jornada[0]->paused == 0){
-                    $paused = 0;
-                }else if ($jornada[0]->paused != 0){
+               if ($jornada[0]->paused != 0){
                     $paused = $jornada[0]->paused;
                 }
 
@@ -457,11 +463,10 @@ class JourneyController extends ApiController
             }else if (count($jornada) == 0){
                
                 $value = false;
-                 $paused = 0;
             }
 
             if ($paused != 0){
-                $paused  = (time() - $paused)/60;
+                $paused  = (time() - $paused)/60 + 0.01;
             }
             if ( $time_lost != 0){
                 $time_lost = $time_lost/60;
@@ -569,7 +574,7 @@ public function chart_data (Request $request){
 }*/
 
 /* DATA PARA EL GRAFICO DE LÍNEA POR MES / HORAS TRABAJADAS */
-public function chart_line_pormes (Request $request){
+public function chart_line_pormes ($id,Request $request){
 
             $hash = $request->header('Authorization',null);
             $JwtAuth = new JwtAuth();
@@ -579,7 +584,9 @@ public function chart_line_pormes (Request $request){
                 if ($checkToken){
 
                    // recoge el user   
-                    $user = $JwtAuth->checkToken($hash,true);
+                    //$user = $JwtAuth->checkToken($hash,true);
+                    $user = User::find($id);
+                    $nombrecompleto = $user->name.' '.$user->surname;
 
                 
                     $time = time();
@@ -593,16 +600,18 @@ public function chart_line_pormes (Request $request){
                         }else{
                             $num = $i;
                         }
-                        $meses[] = Journey::where('user_id',$user->sub)
+                         $valor = Journey::where('user_id',$id)
                             ->where('date','like','%'.$añohoy.$num.'-'.'%')
                             ->sum('time');
+                        $meses[] = round($valor/60/60,2);
                     }
 
 
                 
                     $data = [
                         'status' => 'success',
-                         'data_line' =>$meses    
+                         'data_line' =>$meses,
+                         'label' => $nombrecompleto    
                     ];
 
                     return response()->json($data,200);
@@ -616,7 +625,7 @@ public function chart_line_pormes (Request $request){
 }
 
 /* DATA PARA EL GRAFICO DE Donut MISHORAS/HORASTOTALES */
-public function chart_donut_porcentaje (Request $request){
+public function chart_donut_porcentaje ($id,Request $request){
 
             $hash = $request->header('Authorization',null);
             $JwtAuth = new JwtAuth();
@@ -626,15 +635,20 @@ public function chart_donut_porcentaje (Request $request){
                 if ($checkToken){
 
                    // recoge el user   
-                    $user = $JwtAuth->checkToken($hash,true);
+                   // $user = $JwtAuth->checkToken($hash,true);
+                    $user = User::find($id);
+                    $nombrecompleto = $user->name.' '.$user->surname;
 
-                     $jornadaactiva = ActiveJourney::where('user_id',$user->sub)->get();
-                    $jornada = Journey::where('user_id',$user->sub)
+                    $time = time();
+                    $diahoy = date('Y-m-d',$time);
+
+                     $jornadaactiva = ActiveJourney::where('user_id',$id)->get();
+                    $jornada = Journey::where('user_id',$id)
                                 ->where('date',$diahoy)
                                 ->get();
 
                    $horastotales = Journey::sum('time');
-                   $mishoras = Journey::where('user_id',$user->sub)->sum('time');
+                   $mishoras = Journey::where('user_id',$id)->sum('time');
 
                    $today = 0;
                    //tiene jornada activa 
@@ -643,6 +657,11 @@ public function chart_donut_porcentaje (Request $request){
                          $today = time()-($jornadaactiva[0]->initial_time);
 
                          $today -= $jornadaactiva[0]->time_lost;
+
+                        /* if ($today > 0){
+                            $today = round(($today/60/60),2);
+                        }*/
+
                     }else{
                         //tiene jornada finalizada o todavia no la ha hecho
                         if (count($jornada) >= 1){
@@ -656,17 +675,19 @@ public function chart_donut_porcentaje (Request $request){
                     $mishoras += $today;
 
                    if ($horastotales > 0){
-                        $horastotales = $horastotales/60/60;
+                        $horastotales = round($horastotales/60/60,2);
                    }
                     if ($mishoras > 0){
-                        $mishoras = $mishoras/60/60;
+                        $mishoras = round($mishoras/60/60,2);
                    }
                 
                     $data = [
                         'status' => 'success',
-                         'data_donut' =>[
+                         'data_donut' =>
+                         array(
                             $mishoras,$horastotales
-                         ]   
+                         ),
+                         'label' => array($nombrecompleto,'Horas totales') 
                     ];
 
                     return response()->json($data,200);
@@ -680,7 +701,7 @@ public function chart_donut_porcentaje (Request $request){
 }
 
 /* DATA PARA EL GRAFICO DE Donut MISHORAS/ 8 horas */
-public function chart_donut_dia (Request $request){
+public function chart_donut_dia ($id,Request $request){
 
             $hash = $request->header('Authorization',null);
             $JwtAuth = new JwtAuth();
@@ -690,13 +711,16 @@ public function chart_donut_dia (Request $request){
                 if ($checkToken){
 
                    // recoge el user   
-                    $user = $JwtAuth->checkToken($hash,true);
+                   // $user = $JwtAuth->checkToken($hash,true);
 
+                     $user = User::find($id);
+                    $nombrecompleto = $user->name.' '.$user->surname;
+                    
                     $time = time();
                     $diahoy = date('Y-m-d',$time);
 
-                    $jornadaactiva = ActiveJourney::where('user_id',$user->sub)->get();
-                    $jornada = Journey::where('user_id',$user->sub)
+                    $jornadaactiva = ActiveJourney::where('user_id',$id)->get();
+                    $jornada = Journey::where('user_id',$id)
                                 ->where('date',$diahoy)
                                 ->get();
 
@@ -708,6 +732,7 @@ public function chart_donut_dia (Request $request){
                          $today = time()-($jornadaactiva[0]->initial_time);
 
                          $today -= $jornadaactiva[0]->time_lost;
+
                     }else{
                         //tiene jornada finalizada o todavia no la ha hecho
                         if (count($jornada) >= 1){
@@ -720,12 +745,12 @@ public function chart_donut_dia (Request $request){
                     }
 
                     if ($today > 0){
-                        $today = ($today/60/60);
-                    }
+                            $today = round(($today/60/60),2);
+                        }
 
                     $data = [
-                         'data_donut' =>
-                                 [ $today,8 ]      
+                         'data_donut' =>$today,
+                         'label' =>$nombrecompleto      
                     ];
 
                     return response()->json($data,200);
@@ -736,7 +761,7 @@ public function chart_donut_dia (Request $request){
                 }   
 }
 /* DATA PARA EL GRAFICO DE Donut MISHORAS/ 160 horas */
-public function chart_donut_mes (Request $request){
+public function chart_donut_mes ($id,Request $request){
 
             $hash = $request->header('Authorization',null);
             $JwtAuth = new JwtAuth();
@@ -746,20 +771,22 @@ public function chart_donut_mes (Request $request){
                 if ($checkToken){
 
                    // recoge el user   
-                    $user = $JwtAuth->checkToken($hash,true);
- 
+                   // $user = $JwtAuth->checkToken($hash,true);
+                     $user = User::find($id);
+                    $nombrecompleto = $user->name.' '.$user->surname;
+
                     $time = time();
                     $diahoy = date('Y-m-d',$time);
                     $meshoy = date('Y-m-',$time);
 
-                    $jornadaactiva = ActiveJourney::where('user_id',$user->sub)->get();
-                     $jornada = Journey::where('user_id',$user->sub)
+                    $jornadaactiva = ActiveJourney::where('user_id',$id)->get();
+                     $jornada = Journey::where('user_id',$id)
                                 ->where('date',$diahoy)
                                 ->get();
 
                     $today = 0;
                     // $semana  es mas chungo porque hay que ver que semana estamos y tal o sea que de momento no !!!
-                    $mes  = Journey::where('user_id',$user->sub)
+                    $mes  = Journey::where('user_id',$id)
                             ->where('date','like','%'.$meshoy.'%')
                             ->sum('time');
 
@@ -768,6 +795,10 @@ public function chart_donut_mes (Request $request){
                             // TODO -- quedaria quitar tmb el tiempo de las paradas
                          $today = time()-($jornadaactiva[0]->initial_time);
                          $today -= $jornadaactiva[0]->time_lost;
+
+                       /* if ($today > 0){
+                            $today = round(($today/60/60),2);
+                        }*/
 
                     }else{
                         //tiene jornada finalizada o todavia no la ha hecho
@@ -783,12 +814,13 @@ public function chart_donut_mes (Request $request){
                     $mes += $today;
 
                     if ($mes > 0){
-                        $mes = ($mes/60/60);
+                        $mes = round(($mes/60/60),2);
                     }
 
                     $data = [
-                         'data_donut' =>
-                                 [ $mes,16 ]     // 160  
+                         'data_donut' => $mes,
+                         'label' =>$nombrecompleto
+                                
                     ];
 
                     return response()->json($data,200);
@@ -800,7 +832,7 @@ public function chart_donut_mes (Request $request){
 }
 
 /* DATA PARA EL GRAFICO DE Donut MISHORAS/ 160 horas */
-public function chart_donut_anio (Request $request){
+public function chart_donut_anio ($id,Request $request){
 
             $hash = $request->header('Authorization',null);
             $JwtAuth = new JwtAuth();
@@ -810,20 +842,22 @@ public function chart_donut_anio (Request $request){
                 if ($checkToken){
 
                    // recoge el user   
-                    $user = $JwtAuth->checkToken($hash,true);
- 
+                   // $user = $JwtAuth->checkToken($hash,true);
+                     $user = User::find($id);
+                    $nombrecompleto = $user->name.' '.$user->surname;
+
                     $time = time();
                     $diahoy = date('Y-m-d',$time);
                     $añohoy = date('Y-',$time);
 
-                    $jornadaactiva = ActiveJourney::where('user_id',$user->sub)->get();
-                    $jornada = Journey::where('user_id',$user->sub)
+                    $jornadaactiva = ActiveJourney::where('user_id',$id)->get();
+                    $jornada = Journey::where('user_id',$id)
                                 ->where('date',$diahoy)
                                 ->get();
 
                     $today = 0;
                    
-                    $año  = Journey::where('user_id',$user->sub)
+                    $año  = Journey::where('user_id',$id)
                             ->where('date','like','%'.$añohoy.'%')
                             ->sum('time');
 
@@ -832,6 +866,10 @@ public function chart_donut_anio (Request $request){
                             // TODO -- quedaria quitar tmb el tiempo de las paradas
                          $today = time()-($jornadaactiva[0]->initial_time);
                          $today -= $jornadaactiva[0]->time_lost;
+
+                        /* if ($today > 0){
+                            $today = round(($today/60/60),2);
+                        }*/
 
                     }else{
                         //tiene jornada finalizada o todavia no la ha hecho
@@ -847,12 +885,12 @@ public function chart_donut_anio (Request $request){
                     $año += $today;
 
                     if ($año > 0){
-                        $año = ($año/60/60);
+                        $año = round(($año/60/60),2);
                     }
 
                     $data = [
-                         'data_donut' =>
-                                 [ $año,26 ]   //1826   
+                         'data_donut' => $año,
+                         'label' =>$nombrecompleto          
                     ];
 
                     return response()->json($data,200);
