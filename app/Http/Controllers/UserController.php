@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Export;
 use App\Helpers\JwtAuth;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ApiController;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 
 class UserController extends ApiController
@@ -222,7 +223,7 @@ class UserController extends ApiController
                 'name' => 'string|min:3',
                 'surname' =>'string',
                 'number' =>'max:9',
-                'email' =>  Rule::unique('users')->ignore($user->sub),
+                'email' =>  Rule::unique('users')->ignore($id),
                 'dni' =>'max:9',
                 'password' =>'confirmed',
             ]);
@@ -269,10 +270,56 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        // con sus jornadas y elemntos de imagen por supuesto tmb borrados !
-        // pero mas adelante cuando haga dentro de la App para crear tmb y eliminar ! ; 
+
+      $hash = $request->header('Authorization',null);
+        $JwtAuth = new JwtAuth();
+        $checkToken = $JwtAuth->checkToken($hash);
+
+        if ($checkToken){
+            
+            $user = User::find($id)->first();
+
+            // PUEDE METERSE TODO EN UNA TRANSACCION EN VERDAD
+
+             // con sus jornadas y elemntos de imagen por supuesto tmb borrados !
+              $journeys = Journey::where('user_id','=',$id);
+
+              //delete los files relacionados
+              foreach ($journeys as $j) {
+                   Storage::disk('images')->delete('sign'.$j->signature);
+              }
+
+              // delete de la tabla trigger pdf
+                 DB::table('trigger_pdf')->where('user_id', '=', $id)->delete();
+
+              //borra los exports y de su tabla
+
+                  $names = Export::where('user_id',$id)->get();
+
+                  foreach ($names as $file) {
+                      Storage::disk('local')->delete('pdf/'.$file->namefile);
+                      $file->delete();
+                  }
+
+              // elimina las jornaadas  de este user
+              foreach ($journeys as $j) {
+                   $j->delete();
+              }
+
+              // ELIMINA EL USER
+
+                  $user->delete();
+
+              return $this->showOne($user,'userdeleted');
+
+        }else{
+
+            return $this->errorResponse('No autenticado',409);
+        }   
+       
+       
     }
 
      public function register(Request $request){   // devuelve los errors a pelo ahi { 'name' => 'debe ser ..' }
@@ -290,6 +337,13 @@ class UserController extends ApiController
         $role = 'user';
         $password = (!is_null($json) && isset($params->password)) ? $params->password : null;*/
 
+        $role = 'user';
+        // active a  0 por defecto y si hay un param admin_creator = loquesea -> active a 1
+        $active = 0;
+        if (isset($params->role)){
+            $role = $params->role;
+        }
+
         //validar los datos
             $validate = \Validator::make($params_array,[
                 'name' => 'required|string|min:3',
@@ -300,6 +354,7 @@ class UserController extends ApiController
                 'password' =>'required|confirmed',
             ]);
 
+            //errors()->getMessages();
             if ($validate->fails()){
                 return response()->json($validate->errors(),400);
             }
@@ -312,7 +367,7 @@ class UserController extends ApiController
             $user->number = isset($params->number) ? $params->number : null ;
              $user->email = $params->email;
              $user->dni = $params->dni;
-            $user->role = 'user';
+            $user->role = $role;
             $user->active = 1;
 
             $pwd = hash('sha256',$params->password);
@@ -391,4 +446,64 @@ class UserController extends ApiController
 
         return response()->json($signup,200);    
     }
+
+    public function makeadmin(Request $request){
+
+        $hash = $request->header('Authorization',null);
+        $JwtAuth = new JwtAuth();
+        $checkToken = $JwtAuth->checkToken($hash);
+
+        if ($checkToken){
+
+             $id = $request->id;
+
+              $user = User::find($id);
+
+            $user->role = 'admin';
+            $user->save();
+
+            return $this->showOne($user,'useradmin');
+
+        }else{
+
+            return $this->errorResponse('No autenticado',409);
+        }   
+    }
+
+    public function setactive(Request $request){
+
+        $hash = $request->header('Authorization',null);
+        $JwtAuth = new JwtAuth();
+        $checkToken = $JwtAuth->checkToken($hash);
+
+        if ($checkToken){
+
+             $id = $request->id;
+             $activo = $request->active;
+
+             $user = User::find($id);
+
+             if ($activo == 0 ){
+              // elimina ese user porque no lo acepta en el sistema
+                $user->delete();
+
+             }elseif($activo == 1 ) {
+                 $user->active = 1;
+                $user->save();
+             }
+
+            $data = [
+                  'status' =>'success',
+                  'user'=>$user,
+                  'active'=>$activo
+                ];
+
+            return response()->json($data,200);
+
+        }else{
+
+            return $this->errorResponse('No autenticado',409);
+        }   
+    }
+
 }

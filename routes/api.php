@@ -36,6 +36,8 @@ Route::get('/has_journey','JourneyController@hasactivejourney')->middleware('cor
 Route::resource('/users','UserController',['except' =>'create','edit','store'])->middleware('cors');
 // me da los 2 primeros users ;;;;
 Route::get('/get_first_users', 'UserController@get2first')->middleware('cors');
+Route::get('/make_admin', 'UserController@makeadmin')->middleware('cors');
+Route::get('/set_active', 'UserController@setactive')->middleware('cors');
 
 
 // Pdf Controller

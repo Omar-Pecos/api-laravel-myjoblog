@@ -70,4 +70,8 @@ class User extends Authenticatable
         return $this->hasMany('App\Journey');
     }
 
+    public function exports(){
+        return $this->hasMany('App\Export');
+    }
+
 }

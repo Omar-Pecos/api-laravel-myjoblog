@@ -50,12 +50,25 @@ class JourneyController extends ApiController
                         ->Where($field, 'like', '%' . $search . '%')
                         ->get();
 
+                  // como el accesor de date en Journey model
+                    foreach ($journeys as $j) {
+                          $date =  explode("-", $j->date);
+                          $string_date = $date[2].'/'.$date[1].'/'.$date[0];
+                          $j->date = $string_date;
+
+                          $userJornada =  User::where('id',$j->user_id)->first();
+                          $j->user = $userJornada->getAttributes();
+                    }  
+
             }else{
 
                 $journeys = Journey::all();
+
+                foreach ($journeys as $j) {
+                    $j->user;
+                }
             }
 
-           // dd($journeys);
 
              // transforma las posiciones en array para facilitar la lectura en angular--> se puede hacer con un accesor o que direcmente lo guarde como array !! 
              foreach ($journeys as $j) {
@@ -63,7 +76,6 @@ class JourneyController extends ApiController
                  $valorend = $j->final_pos;
                  $j->initial_pos = json_decode($valorini,true);
                  $j->final_pos = json_decode($valorend,true);
-                  $j->user_data = $j->user;
              }
 
              return $this->showAll($journeys,'journeys');
@@ -131,6 +143,13 @@ class JourneyController extends ApiController
                             ->Where('user_id',$id)
                             ->Where($field, 'like', '%' . $search . '%')
                             ->get();
+
+                    // como el accesor de date en Journey model
+                    foreach ($journeys as $j) {
+                          $date =  explode("-", $j->date);
+                          $string_date = $date[2].'/'.$date[1].'/'.$date[0];
+                          $j->date = $string_date;
+                    }
 
                 }else{
                      $journeys = $usuario->journeys;

@@ -27,7 +27,7 @@ trait ApiResponser{
 	}
 
 	protected function errorResponse($message,$code){
-		return response()->json(['status'=>'error','message' => $message],$code);
+		return response()->json(['status'=>'error','message' => $message,'code' =>$code],$code);
 	}
 
 	protected function showAll(Collection $collection,$name,$code=200){

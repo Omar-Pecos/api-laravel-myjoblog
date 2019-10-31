@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Export;
 use App\Journey;
 use App\Helpers\JwtAuth;
 use Illuminate\Http\Request;
@@ -108,12 +109,12 @@ class PdfController extends ApiController
               
             
 			// sacar los nombre de la BDD
-                $names = DB::table('exports')->where('user_id',$user->sub)->get();
-             // array files con mis pdf
-            // $files =  Storage::disk('local')->files('pdf');
+               // $names = DB::table('exports')->where('user_id',$user->sub)->get();
 
-
-              return response()->json(['status'=>'success','files'=>$names],200);
+             $names = Export::where('user_id',$user->sub)->get();
+        
+              //return response()->json(['status'=>'success','files'=>$names],200);
+                return $this->showAll($names,'files');
 
             }else{
 
@@ -171,9 +172,9 @@ class PdfController extends ApiController
               $name = $request->name;
              $path = storage_path("app/pdf/".$name);
 
-             DB::table('exports')->where('namefile', '=', $name)->delete();
+            // DB::table('exports')->where('namefile', '=', $name)->delete();
 
-
+             Export::where('namefile', '=', $name)->delete();
              Storage::disk('local')->delete('pdf/'.$name);
 
              return response()->json([
