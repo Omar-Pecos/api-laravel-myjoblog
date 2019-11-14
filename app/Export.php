@@ -14,7 +14,7 @@ class Export extends Model
     }
 
     //accesor del datetime
-    public function getDatetimeAttribute($valor){
+   /* public function getDatetimeAttribute($valor){
 
     	$datetime = explode(" ",$valor);
         
@@ -22,5 +22,5 @@ class Export extends Model
         $string_date = $date[2].'/'.$date[1].'/'.$date[0];
         
        return $string_date." ".$datetime[1];
-    }
+    }*/
 }

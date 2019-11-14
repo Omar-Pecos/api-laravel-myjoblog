@@ -22,7 +22,9 @@ class JwtAuth{
 			))->first();
 
 		$signup = false;
-		if (is_object($user)){
+
+		// comprueba tmb que active sea 1 !!!
+		if (is_object($user) && $user->active == 1){
 			$signup = true;
 		}
 

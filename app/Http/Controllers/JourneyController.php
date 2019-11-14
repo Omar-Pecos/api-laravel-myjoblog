@@ -62,7 +62,9 @@ class JourneyController extends ApiController
 
             }else{
 
-                $journeys = Journey::all();
+               
+                     $journeys = Journey::all();
+            
 
                 foreach ($journeys as $j) {
                     $j->user;
@@ -152,7 +154,11 @@ class JourneyController extends ApiController
                     }
 
                 }else{
-                     $journeys = $usuario->journeys;
+
+                       
+                            $journeys = $usuario->journeys;
+                       
+                    
                 }             
                    
 
@@ -763,9 +769,9 @@ public function chart_donut_dia ($id,Request $request){
                         }
                     }
 
-                    if ($today > 0){
+                   /* if ($today > 0){
                             $today = round(($today/60/60),2);
-                        }
+                        }*/
 
                     $data = [
                          'data_donut' =>$today,

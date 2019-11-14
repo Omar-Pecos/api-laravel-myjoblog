@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,7 +10,7 @@
 
 	<style type="text/css">
 					#divcontenedor{					
-						background-image:url(http://webtime.com.devel/img/bgverde60.png);
+						background-image:url({{config('app.url')}}img/bgverde60.png);
 						width: 100%;
 						height: 100%;
 
@@ -67,7 +66,7 @@
 		<div id="divcontenedor">
 			  <!-- Mi cabecera -->
 			  <div id="cabecera">
-					<img width="75" id="imagen" src="http://webtime.com.devel/img/logocode.png">
+					<img width="75" id="imagen" src="{{config('app.url')}}img/logocode.png">
 					<h3 id="brand">&nbsp;&nbsp;Opv Web Developer</h3>
 				</div>
 
@@ -141,7 +140,8 @@
 							    	</td style="border: 1px solid <?php echo $ran_color; ?> ;">
 							    	<td style="border: 1px solid <?php echo $ran_color; ?> ;">{{$j->time}} horas</td>
 							    	<td style="border: 1px solid <?php echo $ran_color; ?> ;">
-							    		<img width="340" src="http://webtime.com.devel/storage/images/{{$j->signature}}">
+							    		<!--	<img width="340" src="{{config('app.url')}}api/get_image?name={{$j->signature}}"> -->
+							    		<img width="340" src="{{config('app.url')}}storage/firmas/{{$j->signature}}">
 							    	</td>
 				    			</tr>
 							@endforeach

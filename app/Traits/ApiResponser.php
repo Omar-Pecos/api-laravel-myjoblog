@@ -43,6 +43,9 @@ trait ApiResponser{
 		$collections = $this->cacheResponse($collections);*/
 		
 		$collection = $this->sortData($collection); // le passaba el transformer para no dar pistas sobre la verdadera estructura de la BBDD
+
+		$collection = $this->myAccessors($collection);				
+
 		$collection = $this->paginate($collection);
 
 		return $this->successResponse($collection,$name,$code);
@@ -68,7 +71,7 @@ trait ApiResponser{
 						}else if ($order == 'desc'){
 							$collection = $collection->sortByDesc->{$sort_by};
 						}	
-
+						
 						$this->order = $order;
 						$this->sort_by = $sort_by;
 				}
@@ -98,5 +101,40 @@ trait ApiResponser{
 
 		$paginate->appends(request()->all());
 		return $paginate;
+	}
+
+	protected function myAccessors(Collection $collection){
+
+			if (count($collection) > 0){
+
+
+					$className = get_class($collection->first());
+						$nombreClase = class_basename($className);
+
+						// Accesor DESPS DE FILTRAR ->date
+						if ($nombreClase == 'Journey'){
+							
+							foreach ($collection as $j) {
+								
+								 $date =  explode("-", $j->date);
+						        $string_date = $date[2].'/'.$date[1].'/'.$date[0];
+					        	$j->date = $string_date;
+							}
+						}
+
+						// Accesor DESPS DE FILTRAR ->datetime en exports
+						if ($nombreClase == 'Export'){
+							foreach ($collection as $e) {
+							
+									$datetime = explode(" ",$e->datetime);
+							        
+							         $date =  explode("-", $datetime[0]);
+							        $string_date = $date[2].'/'.$date[1].'/'.$date[0];
+							       	$e->datetime =  $string_date." ".$datetime[1];
+							}
+						}
+			}
+
+						return $collection;
 	}
 }

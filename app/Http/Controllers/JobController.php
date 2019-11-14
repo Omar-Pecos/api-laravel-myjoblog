@@ -23,14 +23,17 @@ class JobController extends ApiController
 
                   $id = request()->id;
                   $year = request()->year;
+                  $identificador = request()->user_id;
 
                   /* una mejor respuesta para sacar la info en infomsg */
                  $data = ['antes' => time(),
                  'msg' => 'Proceso enviado'];
 
-                  dispatch(new GeneratePdf($user,$id,$year));
+                  dispatch(new GeneratePdf($user,$id,$year,$identificador));
 
                   $data ['despues'] = time();
+                  $tiempo = $data['despues'] - $data['antes'];
+                  $data['tiempo'] = $tiempo;
                   
                   return response()->json($data,200);
 
@@ -40,6 +43,6 @@ class JobController extends ApiController
     } 
 
 
-    	
+      
     }
 }

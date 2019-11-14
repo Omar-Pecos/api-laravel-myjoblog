@@ -21,13 +21,17 @@ class Journey extends Model
 
     }
 
-    public function getDateAttribute($valor){
+   /* public function getDateAttribute($valor){
         
          $date =  explode("-", $valor);
         $string_date = $date[2].'/'.$date[1].'/'.$date[0];
         
        return $string_date;
-    }
+    }*/
+
+   /* public function getIdAttribute($valor){
+        $this->user_data = $this->user;
+    }*/
 
    
 }

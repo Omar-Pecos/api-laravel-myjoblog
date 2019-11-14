@@ -13,43 +13,44 @@ use Illuminate\Support\Facades\Storage;
 
 class PdfController extends ApiController
 {
+    // funcion de prueba para los pdf ya no se usa !!
     public function print_pdf(){
 
-    	// recoger los datos a pintar
-    	$journeys = Journey::find([36, 37, 38]);
-	
+        // recoger los datos a pintar
+        $journeys = Journey::find([36, 37, 38]);
+    
 
     //recoger el contenido del otro fichero
-    	$content = view('print_view',
-    			['journeys' => $journeys])->render();
-    	
-    	$html2pdf = new Html2Pdf('P','A4','es','true','UTF-8');
-    	//$html2pdf->output('pdf_generated.pdf');
+        $content = view('print_view',
+                ['journeys' => $journeys])->render();
+        
+        $html2pdf = new Html2Pdf('P','A4','es','true','UTF-8');
+        //$html2pdf->output('pdf_generated.pdf');
 
 
-		$html2pdf->WriteHTML($content);
-    	
-		$time = date('H:m:i',time());
-		
-	//dd(storage_path('app/public/images'));
-    	$pdf= $html2pdf->Output(storage_path('storage/app/pdf/').'pdf_time_'.$time.'.pdf', 'F'); // The filename is ignored when you use 'S' as the second parameter.
+        $html2pdf->WriteHTML($content);
+        
+        $time = date('H:m:i',time());
+        
+    //dd(storage_path('app/public/images'));
+        $pdf= $html2pdf->Output(storage_path('storage/app/pdf/').'pdf_time_'.$time.'.pdf', 'F'); // The filename is ignored when you use 'S' as the second parameter.
 
-    	echo "Pdf generado de time ".$time."!!! ";
-		    	/*//respuesta para visualizarlo !!!
-				return response($pdf)
-				                  ->header('Content-Type', 'application/pdf')
-				                  ->header('Content-Length', strlen($pdf))
-				                  ->header('Content-Disposition', 'inline; filename="example.pdf"');
-				*/
-		}
+        echo "Pdf generado de time ".$time."!!! ";
+                /*//respuesta para visualizarlo !!!
+                return response($pdf)
+                                  ->header('Content-Type', 'application/pdf')
+                                  ->header('Content-Length', strlen($pdf))
+                                  ->header('Content-Disposition', 'inline; filename="example.pdf"');
+                */
+        }
 
-	public function Callqueue(){
-		//
-	}
+    public function Callqueue(){
+        //
+    }
 
-	public function getTrigger(Request $request){
+    public function getTrigger(Request $request){
 
-		$hash = $request->header('Authorization',null);
+        $hash = $request->header('Authorization',null);
         $JwtAuth = new JwtAuth();
         $checkToken = $JwtAuth->checkToken($hash);
 
@@ -67,51 +68,53 @@ class PdfController extends ApiController
             return $this->errorResponse('No autenticado',409);
         } 
 
-	}
+    }
 
-	public function setTrigger(Request $request){
+    public function setTrigger(Request $request){
 
-		$hash = $request->header('Authorization',null);
+        $hash = $request->header('Authorization',null);
         $JwtAuth = new JwtAuth();
         $checkToken = $JwtAuth->checkToken($hash);
 
         if ($checkToken){
              $user = $JwtAuth->checkToken($hash,true);
 
-			       //Recoger post
-			        $json = $request->input('json',null);
-			        $params = json_decode($json);
+                   //Recoger post
+                    $json = $request->input('json',null);
+                    $params = json_decode($json);
 
-		//return response()->json($params->id_journeys,200);
+        //return response()->json($params->id_journeys,200);
 
-			        $info = DB::table('trigger_pdf')
-			        		->where('user_id',$user->sub)
-			        		 ->update(['quantity' => $params->quantity,
-			        		 			'id_journeys'=> json_encode($params->id_journeys,JSON_FORCE_OBJECT)
-			        				]);
+                    $info = DB::table('trigger_pdf')
+                            ->where('user_id',$user->sub)
+                             ->update(['quantity' => $params->quantity,
+                                        'id_journeys'=> json_encode($params->id_journeys,JSON_FORCE_OBJECT)
+                                    ]);
 
-			        return response()->json(['status'=>'success','updated'=>$info],200);
+                    return response()->json(['status'=>'success','updated'=>$info],200);
 
             }else{
 
             return $this->errorResponse('No autenticado',409);
         } 
 
-	}
+    }
 
-	public function getMyFiles(Request $request){
-		$hash = $request->header('Authorization',null);
+    public function getMyFiles(Request $request){
+        $hash = $request->header('Authorization',null);
         $JwtAuth = new JwtAuth();
         $checkToken = $JwtAuth->checkToken($hash);
 
         if ($checkToken){
-             $user = $JwtAuth->checkToken($hash,true);
-              
+            $user = $JwtAuth->checkToken($hash,true);
+            $type = $request->input('type',null);
             
-			// sacar los nombre de la BDD
+            // sacar los nombre de la BDD
                // $names = DB::table('exports')->where('user_id',$user->sub)->get();
 
-             $names = Export::where('user_id',$user->sub)->get();
+             $names = Export::where('user_id',$user->sub)
+                        ->where('type',$type)
+                        ->get();
         
               //return response()->json(['status'=>'success','files'=>$names],200);
                 return $this->showAll($names,'files');
@@ -120,59 +123,61 @@ class PdfController extends ApiController
 
             return $this->errorResponse('No autenticado',409);
         } 
-	}
+    }
 
-	public function seeFile(Request $request){
-      /*  $hash = $request->header('Authorization',null);
-        $JwtAuth = new JwtAuth();
-        $checkToken = $JwtAuth->checkToken($hash);
+    public function seeFile(Request $request){
 
-        if ($checkToken){
-             $user = $JwtAuth->checkToken($hash,true);
-*/
-             
+            /*$hash = $request->header('Authorization',null);
+            $JwtAuth = new JwtAuth();
+            $checkToken = $JwtAuth->checkToken($hash);
 
-             $name = $request->name;
-             
+            if ($checkToken){
 
-             $pdf = Storage::disk('local')->get('pdf/'.$name);
+                     //$user = $JwtAuth->checkToken($hash,true);*/
 
-             $path = storage_path("app/pdf/".$name);
-           
-           
-            /* return response($pdf)
-                                  ->header('Content-Type', 'application/pdf')
-                                  ->header('Content-Length', strlen($pdf))
-                                  ->header('Content-Disposition', 'inline; filename="djhjhgjj"');*/
+                     $name = $request->name;
+                     //$pdf = Storage::disk('local')->get('pdf/'.$name);
+                     $path = storage_path("app/pdf/".$name);
+                   
+                   
+                    /* return response($pdf)
+                                          ->header('Content-Type', 'application/pdf')
+                                          ->header('Content-Length', strlen($pdf))
+                                          ->header('Content-Disposition', 'inline; filename="djhjhgjj"');*/
 
-            return response()->file($path);   
-
-    
-
+                    return response()->file($path);   
            /* }else{
 
                  return $this->errorResponse('No autenticado',409);
-        } */
-			
-		}
-	public function downloadFile(Request $request){
-         $name = $request->name;
-          $path = storage_path("app/pdf/".$name);
+        }*/
+            
+        }
+    public function downloadFile(Request $request){
+            /*$hash = $request->header('Authorization',null);
+            $JwtAuth = new JwtAuth();
+            $checkToken = $JwtAuth->checkToken($hash);
 
-        return response()->download($path, $name);
+            if ($checkToken){*/
+                 $name = $request->name;
+                 $path = storage_path("app/pdf/".$name);
 
-	}
-	public function deleteFile(Request $request){
-          $hash = $request->header('Authorization',null);
+                return response()->download($path, $name);
+           /*}else{
+
+                 return $this->errorResponse('No autenticado',409);
+            }*/
+
+    }
+    public function deleteFile(Request $request){
+
+        $hash = $request->header('Authorization',null);
         $JwtAuth = new JwtAuth();
         $checkToken = $JwtAuth->checkToken($hash);
 
         if ($checkToken){
 
               $name = $request->name;
-             $path = storage_path("app/pdf/".$name);
-
-            // DB::table('exports')->where('namefile', '=', $name)->delete();
+             //$path = storage_path("app/pdf/".$name);
 
              Export::where('namefile', '=', $name)->delete();
              Storage::disk('local')->delete('pdf/'.$name);
@@ -186,10 +191,10 @@ class PdfController extends ApiController
                  return $this->errorResponse('No autenticado',409);
         } 
 
-		
-	}
+        
+    }
 
-	/* public function descargarfile(Request $request){
+    /* public function descargarfile(Request $request){
        
       // $path = storage_path($request->input("file"));
        $path = $request->input('file');

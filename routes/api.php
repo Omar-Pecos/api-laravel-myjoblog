@@ -45,13 +45,13 @@ Route::get('/set_active', 'UserController@setactive')->middleware('cors');
 Route::get('/get_trigger', 'PdfController@getTrigger')->middleware('cors');
 Route::post('/set_trigger', 'PdfController@setTrigger')->middleware('cors');
 
-Route::get('/get_files', 'PdfController@getMyFiles')->middleware('cors');
+Route::post('/get_files', 'PdfController@getMyFiles')->middleware('cors');
 Route::get('/see_file', 'PdfController@seeFile')->middleware('cors');
 Route::get('/down_file', 'PdfController@downloadFile')->middleware('cors');
 Route::get('/delete_file', 'PdfController@deleteFile')->middleware('cors');
 
 // Job Controller
-Route::get('/pdf', 'JobController@processQueue')->middleware('cors');
+Route::get('/pdf', 'JobController@processQueue');
 
 // Journey ( ChartJs data )
 //Route::get('/get_chartdata','JourneyController@chart_data')->middleware('cors');
@@ -63,5 +63,12 @@ Route::get('/data_donut_year/{id}','JourneyController@chart_donut_anio')->middle
 
 
 // Image controller 
-Route::get('/getimage/{name}','ImageController@getImage')->middleware('cors');
+Route::get('/get_image','ImageController@getImage')->middleware('cors');
 
+// Vacation controller 
+Route::get('/get_vacations','VacationController@getVacations')->middleware('cors');
+Route::get('/get_uservacations/{id}','VacationController@getUserVacations')->middleware('cors');
+
+Route::post('/add_vacation','VacationController@addVacation')->middleware('cors');
+Route::post('/edit_vacation','VacationController@editVacation')->middleware('cors');
+Route::get('/delete_vacation/{id}','VacationController@deleteVacation')->middleware('cors');

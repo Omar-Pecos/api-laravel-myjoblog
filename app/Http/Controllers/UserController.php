@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Export;
+use App\Journey;
 use App\Helpers\JwtAuth;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -11,6 +12,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ApiController;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 
 class UserController extends ApiController
@@ -279,17 +281,21 @@ class UserController extends ApiController
 
         if ($checkToken){
             
-            $user = User::find($id)->first();
+            $user = User::find($id);
+
 
             // PUEDE METERSE TODO EN UNA TRANSACCION EN VERDAD
 
              // con sus jornadas y elemntos de imagen por supuesto tmb borrados !
-              $journeys = Journey::where('user_id','=',$id);
+              $journeys = Journey::where('user_id',$id)->get();
 
               //delete los files relacionados
-              foreach ($journeys as $j) {
-                   Storage::disk('images')->delete('sign'.$j->signature);
+              if (count($journeys) > 0){
+                  foreach ($journeys as $j) {
+                     Storage::disk('images')->delete($j->signature);
+                }
               }
+              
 
               // delete de la tabla trigger pdf
                  DB::table('trigger_pdf')->where('user_id', '=', $id)->delete();
@@ -298,15 +304,21 @@ class UserController extends ApiController
 
                   $names = Export::where('user_id',$id)->get();
 
-                  foreach ($names as $file) {
-                      Storage::disk('local')->delete('pdf/'.$file->namefile);
-                      $file->delete();
-                  }
-
-              // elimina las jornaadas  de este user
-              foreach ($journeys as $j) {
-                   $j->delete();
+              if (count($names) > 0){
+                    foreach ($names as $file) {
+                        Storage::disk('local')->delete('pdf/'.$file->namefile);
+                        $file->delete();
+                    }
               }
+              // elimina las jornaadas  de este user
+               if (count($journeys) > 0){
+                    foreach ($journeys as $j) {
+                         $j->delete();
+                    }
+              }
+              
+
+              /*  queda sacar las vacaciones y eliminarlas */
 
               // ELIMINA EL USER
 
@@ -338,10 +350,13 @@ class UserController extends ApiController
         $password = (!is_null($json) && isset($params->password)) ? $params->password : null;*/
 
         $role = 'user';
-        // active a  0 por defecto y si hay un param admin_creator = loquesea -> active a 1
         $active = 0;
+
         if (isset($params->role)){
             $role = $params->role;
+        }
+        if ($params->id == 99){
+          $active = 1;
         }
 
         //validar los datos
@@ -368,7 +383,7 @@ class UserController extends ApiController
              $user->email = $params->email;
              $user->dni = $params->dni;
             $user->role = $role;
-            $user->active = 1;
+            $user->active = $active;
 
             $pwd = hash('sha256',$params->password);
             $user->password = $pwd;
@@ -486,6 +501,8 @@ class UserController extends ApiController
              if ($activo == 0 ){
               // elimina ese user porque no lo acepta en el sistema
                 $user->delete();
+
+                 DB::table('trigger_pdf')->where('user_id', '=', $user->id)->delete();
 
              }elseif($activo == 1 ) {
                  $user->active = 1;
