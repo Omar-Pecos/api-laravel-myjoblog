@@ -34,7 +34,7 @@ class JourneyController extends ApiController
                         'message' => 'No tiene permisos para realizar ese procedimiento',
                     ];*/
 
-                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',401);
+                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',403);
              }
 
 
@@ -88,7 +88,7 @@ class JourneyController extends ApiController
                 'auth' =>0
             ];*/
 
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         } 
          
     }
@@ -117,7 +117,7 @@ class JourneyController extends ApiController
                         'message' => 'No tiene permisos para realizar ese procedimiento',
                     ];*/
 
-                    return $this->errorResponse('No tiene permisos para realizar ese procedimiento',401);
+                    return $this->errorResponse('No tiene permisos para realizar ese procedimiento',403);
              }
 
              //  coje las jornadas del id del user que se pasa por url
@@ -175,7 +175,7 @@ class JourneyController extends ApiController
                 'message' => 'No autenticado',
                 'auth' =>0
             ];*/
-             return $this->errorResponse('No autenticado',409);
+             return $this->errorResponse('No autenticado',401);
         } 
     }
 
@@ -269,7 +269,7 @@ class JourneyController extends ApiController
                         'auth' =>0
                     ];*/
 
-                    return $this->errorResponse('No autenticado',409);
+                    return $this->errorResponse('No autenticado',401);
                 }
         }
 
@@ -317,7 +317,7 @@ class JourneyController extends ApiController
 
                         }else{
 
-                              return $this->errorResponse('No autenticado',409);
+                              return $this->errorResponse('No autenticado',401);
                     }
         }
 
@@ -363,7 +363,7 @@ class JourneyController extends ApiController
 
                         }else{
 
-                              return $this->errorResponse('No autenticado',409);
+                              return $this->errorResponse('No autenticado',401);
                     }
         }
 
@@ -411,7 +411,7 @@ class JourneyController extends ApiController
                                     'message' => 'No existe jornada activa para este usuario',
                                 ];*/
 
-                                 return $this->errorResponse('No existe jornada activa para este usuario',409);
+                                 return $this->errorResponse('No existe jornada activa para este usuario',401);
                             }
 
                         $journey = new Journey();
@@ -453,7 +453,7 @@ class JourneyController extends ApiController
                             'auth' => 0
                         ];*/
 
-                        return $this->errorResponse('No autenticado',409);
+                        return $this->errorResponse('No autenticado',401);
                     }
 
         }
@@ -517,7 +517,7 @@ class JourneyController extends ApiController
             ];
         }*/
 
-        return $this->errorResponse('No autenticado',409);
+        return $this->errorResponse('No autenticado',401);
     } 
 
 }
@@ -592,7 +592,7 @@ public function chart_data (Request $request){
 
                 }else{
 
-                    return $this->errorResponse('No autenticado',409);
+                    return $this->errorResponse('No autenticado',401);
                 } 
 
    
@@ -628,7 +628,9 @@ public function chart_line_pormes ($id,Request $request){
                          $valor = Journey::where('user_id',$id)
                             ->where('date','like','%'.$añohoy.$num.'-'.'%')
                             ->sum('time');
+                       
                         $meses[] = round($valor/60/60,2);
+                        // $meses[] = $valor;
                     }
 
 
@@ -645,7 +647,7 @@ public function chart_line_pormes ($id,Request $request){
 
                 }else{
 
-                    return $this->errorResponse('No autenticado',409);
+                    return $this->errorResponse('No autenticado',401);
                 }  
 }
 
@@ -683,7 +685,7 @@ public function chart_donut_porcentaje ($id,Request $request){
 
                          $today -= $jornadaactiva[0]->time_lost;
 
-                        /* if ($today > 0){
+                         /*if ($today > 0){
                             $today = round(($today/60/60),2);
                         }*/
 
@@ -721,7 +723,7 @@ public function chart_donut_porcentaje ($id,Request $request){
 
                 }else{
 
-                    return $this->errorResponse('No autenticado',409);
+                    return $this->errorResponse('No autenticado',401);
                 }  
 }
 
@@ -782,7 +784,7 @@ public function chart_donut_dia ($id,Request $request){
 
                 }else{
 
-                    return $this->errorResponse('No autenticado',409);
+                    return $this->errorResponse('No autenticado',401);
                 }   
 }
 /* DATA PARA EL GRAFICO DE Donut MISHORAS/ 160 horas */
@@ -852,7 +854,7 @@ public function chart_donut_mes ($id,Request $request){
 
                 }else{
 
-                    return $this->errorResponse('No autenticado',409);
+                    return $this->errorResponse('No autenticado',401);
                 }   
 }
 
@@ -892,9 +894,9 @@ public function chart_donut_anio ($id,Request $request){
                          $today = time()-($jornadaactiva[0]->initial_time);
                          $today -= $jornadaactiva[0]->time_lost;
 
-                        /* if ($today > 0){
+                         if ($today > 0){
                             $today = round(($today/60/60),2);
-                        }*/
+                        }
 
                     }else{
                         //tiene jornada finalizada o todavia no la ha hecho
@@ -922,7 +924,7 @@ public function chart_donut_anio ($id,Request $request){
 
                 }else{
 
-                    return $this->errorResponse('No autenticado',409);
+                    return $this->errorResponse('No autenticado',401);
                 }   
    }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\JwtAuth;
 use App\Jobs\GeneratePdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ApiController;
 
 class JobController extends ApiController
@@ -35,11 +36,23 @@ class JobController extends ApiController
                   $tiempo = $data['despues'] - $data['antes'];
                   $data['tiempo'] = $tiempo;
                   
+                  $string = '';
+                  if ($id == 'all'){
+                    if ($identificador == 0){
+                        $string = 'de todos los usuarios en '.$year;
+                    }else{
+                        $string = 'del usuario con ID '.$identificador.' en '.$year;
+                    }
+                  }else{
+                      $string = 'automático';
+                  }
+
+                  DB::select('call regaccion(?,?,?,?)',array($user->sub,$user->name.' '.$user->surname,$user->role,'Generado un pdf '.$string));
                   return response()->json($data,200);
 
          }else{
   
-         return $this->errorResponse('No autenticado',409);
+         return $this->errorResponse('No autenticado',401);
     } 
 
 

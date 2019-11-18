@@ -36,7 +36,7 @@ class VacationController extends ApiController
                 'auth' =>0
             ];*/
 
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         } 
     }
 
@@ -66,7 +66,7 @@ class VacationController extends ApiController
                 'auth' =>0
             ];*/
 
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         } 
     }
 
@@ -100,7 +100,7 @@ class VacationController extends ApiController
         
         }else{
  
-             return $this->errorResponse('No autenticado',409);
+             return $this->errorResponse('No autenticado',401);
         }
 
     }
@@ -140,7 +140,7 @@ class VacationController extends ApiController
         
         }else{
  
-             return $this->errorResponse('No autenticado',409);
+             return $this->errorResponse('No autenticado',401);
         }
 
     }
@@ -171,7 +171,7 @@ class VacationController extends ApiController
         
         }else{
  
-             return $this->errorResponse('No autenticado',409);
+             return $this->errorResponse('No autenticado',401);
         }
 
     }

@@ -15,5 +15,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/print_pdf','PdfController@print_pdf');
+//Route::get('/print_pdf','PdfController@print_pdf');
+
+Route::get('/storage/firmas/{filename}', function ($filename)
+{
+    $path = storage_path('app/public/firmas/' . $filename);
+ 
+    if (!File::exists($path)) {
+        abort(404);
+    }
+ 
+    $file = File::get($path);
+    $type = File::mimeType($path);
+ 
+    $response = Response::make($file, 200);
+    $response->header("Content-Type", $type);
+ 
+    return $response;
+});
+//->middleware('throttle:30,1');
 

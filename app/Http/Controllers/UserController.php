@@ -37,7 +37,7 @@ class UserController extends ApiController
                         'message' => 'No tiene permisos para realizar ese procedimiento',
                     ];
                      return response()->json($data, 200);*/
-                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',401);
+                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',403);
             }
 
 
@@ -84,7 +84,7 @@ class UserController extends ApiController
             ];
 
              return response()->json($data, 200);*/
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         } 
          
        
@@ -101,7 +101,7 @@ class UserController extends ApiController
 
             if ($user->role == 'user'){
               
-                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',401);
+                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',403);
             }
 
              $users = User::all()->take(2)->pluck('id');
@@ -117,7 +117,7 @@ class UserController extends ApiController
 
         }else{
 
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         }   
        
     }
@@ -144,7 +144,7 @@ class UserController extends ApiController
                         'message' => 'No tiene permisos para realizar ese procedimiento',
                     ];*/
 
-                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',401);
+                     return $this->errorResponse('No tiene permisos para realizar ese procedimiento',403);
             }
             
             $usuario = User::find($id);
@@ -171,7 +171,7 @@ class UserController extends ApiController
                 'message' => 'No autenticado',
                 'auth' =>0
             ];*/
-             return $this->errorResponse('No autenticado',409);
+             return $this->errorResponse('No autenticado',401);
         } 
          
     }
@@ -200,7 +200,7 @@ class UserController extends ApiController
                         'message' => 'No tiene permisos para realizar ese procedimiento',
                     ];*/
 
-                  return $this->errorResponse('No tiene permisos para realizar ese procedimiento',401);
+                  return $this->errorResponse('No tiene permisos para realizar ese procedimiento',403);
             }
             // coje el valor de User del que quiere ser editado
             $usuario = User::find($id);
@@ -224,14 +224,14 @@ class UserController extends ApiController
             $validate = \Validator::make($params_array,[
                 'name' => 'string|min:3',
                 'surname' =>'string',
-                'number' =>'max:9',
+                'number' =>'digits:9',
                 'email' =>  Rule::unique('users')->ignore($id),
                 'dni' =>'max:9',
                 'password' =>'confirmed',
             ]);
 
             if ($validate->fails()){
-                return response()->json($validate->errors(),400);
+                return response()->json($validate->errors()->getMessages(),400);
             }
 
             // igual hay que unsetear el campo ACTIVE SI CAMBIA ? Y EL CAMPO ROLE !!!! 
@@ -251,6 +251,8 @@ class UserController extends ApiController
                 'user' => $usuario
             ];*/
 
+            DB::select('call regaccion(?,?,?,?)',array($user->sub,$user->name.' '.$user->surname,$user->role,'Edición de '.$usuario->name.' '.$usuario->surname));
+
              return $this->showOne($usuario,'user');
         
         }else{
@@ -261,7 +263,7 @@ class UserController extends ApiController
                 'auth' =>0
             ];*/
 
-             return $this->errorResponse('No autenticado',409);
+             return $this->errorResponse('No autenticado',401);
         }
 
     }
@@ -280,7 +282,7 @@ class UserController extends ApiController
         $checkToken = $JwtAuth->checkToken($hash);
 
         if ($checkToken){
-            
+             $usuario = $JwtAuth->checkToken($hash,true);
             $user = User::find($id);
 
 
@@ -316,19 +318,21 @@ class UserController extends ApiController
                          $j->delete();
                     }
               }
-              
-
-              /*  queda sacar las vacaciones y eliminarlas */
+            
+              /*sacar las vacaciones y eliminarlas */
+               $vacations = DB::table('vacations')->where('user_id', '=', $id)->delete();
 
               // ELIMINA EL USER
 
                   $user->delete();
 
+                  DB::select('call regaccion(?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Borrado de '.$user->name.' '.$user->surname.' y sus registros asociados'));
+
               return $this->showOne($user,'userdeleted');
 
         }else{
 
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         }   
        
        
@@ -363,7 +367,7 @@ class UserController extends ApiController
             $validate = \Validator::make($params_array,[
                 'name' => 'required|string|min:3',
                 'surname' =>'required|string',
-                'number' =>'max:9',
+                'number' =>'digits:9',
                 'email' =>'email|required',
                 'dni' =>'required|max:9',
                 'password' =>'required|confirmed',
@@ -371,7 +375,7 @@ class UserController extends ApiController
 
             //errors()->getMessages();
             if ($validate->fails()){
-                return response()->json($validate->errors(),400);
+                return response()->json($validate->errors()->getMessages(),400);
             }
 
             //Crear el usuario 
@@ -409,6 +413,10 @@ class UserController extends ApiController
               'code' => 200,
               'message' => 'Usuario registrado correctamente');*/
 
+              // Creacion desde el sistema por parte de un ADMIN
+             
+                DB::select('call regaccion(?,?,?,?)',array(0,$user->name.' '.$user->surname,$user->role,'Registro de '.$user->name.' '.$user->surname));
+              
               return $this->showOne($user,'registered');
             }
             else{
@@ -418,6 +426,7 @@ class UserController extends ApiController
               'message' => 'Usuario duplicado, ya existe una cuenta con ese correo'
             );   */
 
+            
             return $this->errorResponse('Usuario duplicado, ya existe una cuenta con ese correo',409);
         }
 
@@ -471,17 +480,18 @@ class UserController extends ApiController
         if ($checkToken){
 
              $id = $request->id;
-
+             $usuario = $JwtAuth->checkToken($hash,true);
               $user = User::find($id);
 
             $user->role = 'admin';
             $user->save();
 
+            DB::select('call regaccion(?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Elevar privilegios a '.$user->name.' '.$user->surname));
             return $this->showOne($user,'useradmin');
 
         }else{
 
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         }   
     }
 
@@ -496,6 +506,7 @@ class UserController extends ApiController
              $id = $request->id;
              $activo = $request->active;
 
+              $usuario = $JwtAuth->checkToken($hash,true);
              $user = User::find($id);
 
              if ($activo == 0 ){
@@ -503,10 +514,13 @@ class UserController extends ApiController
                 $user->delete();
 
                  DB::table('trigger_pdf')->where('user_id', '=', $user->id)->delete();
+                 DB::select('call regaccion(?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Denegación de registro y borrado de '.$user->name.' '.$user->surname));
 
              }elseif($activo == 1 ) {
                  $user->active = 1;
                 $user->save();
+
+                DB::select('call regaccion(?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Aceptación en el sistema de '.$user->name.' '.$user->surname));
              }
 
             $data = [
@@ -519,7 +533,7 @@ class UserController extends ApiController
 
         }else{
 
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         }   
     }
 

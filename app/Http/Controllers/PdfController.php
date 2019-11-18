@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PdfController extends ApiController
 {
-    // funcion de prueba para los pdf ya no se usa !!
+    /* Function de prueba para generar un PDF 
     public function print_pdf(){
 
         // recoger los datos a pintar
@@ -36,17 +36,16 @@ class PdfController extends ApiController
         $pdf= $html2pdf->Output(storage_path('storage/app/pdf/').'pdf_time_'.$time.'.pdf', 'F'); // The filename is ignored when you use 'S' as the second parameter.
 
         echo "Pdf generado de time ".$time."!!! ";
-                /*//respuesta para visualizarlo !!!
-                return response($pdf)
-                                  ->header('Content-Type', 'application/pdf')
-                                  ->header('Content-Length', strlen($pdf))
-                                  ->header('Content-Disposition', 'inline; filename="example.pdf"');
-                */
+                //respuesta para visualizarlo !!!
+                    // return response($pdf)
+                                 // ->header('Content-Type', 'application/pdf')
+                                  //->header('Content-Length', strlen($pdf))
+                                  //->header('Content-Disposition', 'inline; filename="example.pdf"');
+                
         }
 
-    public function Callqueue(){
-        //
-    }
+    */
+
 
     public function getTrigger(Request $request){
 
@@ -65,7 +64,7 @@ class PdfController extends ApiController
 
             }else{
 
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         } 
 
     }
@@ -95,7 +94,7 @@ class PdfController extends ApiController
 
             }else{
 
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         } 
 
     }
@@ -121,7 +120,7 @@ class PdfController extends ApiController
 
             }else{
 
-            return $this->errorResponse('No autenticado',409);
+            return $this->errorResponse('No autenticado',401);
         } 
     }
 
@@ -148,7 +147,7 @@ class PdfController extends ApiController
                     return response()->file($path);   
            /* }else{
 
-                 return $this->errorResponse('No autenticado',409);
+                 return $this->errorResponse('No autenticado',401);
         }*/
             
         }
@@ -164,7 +163,7 @@ class PdfController extends ApiController
                 return response()->download($path, $name);
            /*}else{
 
-                 return $this->errorResponse('No autenticado',409);
+                 return $this->errorResponse('No autenticado',401);
             }*/
 
     }
@@ -175,12 +174,15 @@ class PdfController extends ApiController
         $checkToken = $JwtAuth->checkToken($hash);
 
         if ($checkToken){
-
+                 $usuario = $JwtAuth->checkToken($hash,true);
               $name = $request->name;
              //$path = storage_path("app/pdf/".$name);
 
              Export::where('namefile', '=', $name)->delete();
              Storage::disk('local')->delete('pdf/'.$name);
+
+
+             DB::select('call regaccion(?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Borrado del pdf -  '.$name));
 
              return response()->json([
                 'status' => 'success',
@@ -188,7 +190,7 @@ class PdfController extends ApiController
              ]);
 
          }else{
-                 return $this->errorResponse('No autenticado',409);
+                 return $this->errorResponse('No autenticado',401);
         } 
 
         

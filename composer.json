@@ -15,6 +15,7 @@
         "firebase/php-jwt": "^3.0.0",
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
+        "laraveles/spanish": "^1.4",
         "spipu/html2pdf": "^5.2"
     },
     "require-dev": {

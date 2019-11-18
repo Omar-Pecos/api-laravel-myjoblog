@@ -46,6 +46,7 @@ class JwtAuth{
 			$decoded = JWT::decode($jwt,$this->key,array('HS256'));
 
 			if (is_null($getToken)){
+				DB::select('call regaccion(?,?,?,?)',array($user->id,$user->name.' '.$user->surname,$user->role,'Inicio de Sesión'));
 				return $jwt;
 			}else{
 				return $decoded;

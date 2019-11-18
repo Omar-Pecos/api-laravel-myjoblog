@@ -63,7 +63,7 @@ Route::get('/data_donut_year/{id}','JourneyController@chart_donut_anio')->middle
 
 
 // Image controller 
-Route::get('/get_image','ImageController@getImage')->middleware('cors');
+//Route::get('/get_image','ImageController@getImage')->middleware('cors');
 
 // Vacation controller 
 Route::get('/get_vacations','VacationController@getVacations')->middleware('cors');
@@ -72,3 +72,8 @@ Route::get('/get_uservacations/{id}','VacationController@getUserVacations')->mid
 Route::post('/add_vacation','VacationController@addVacation')->middleware('cors');
 Route::post('/edit_vacation','VacationController@editVacation')->middleware('cors');
 Route::get('/delete_vacation/{id}','VacationController@deleteVacation')->middleware('cors');
+
+// Log Controller 
+Route::get('/get_logs','LogController@getLogs')->middleware('cors');
+//Route::get('/get_userlogs/{id}','LogController@getUserLogs')->middleware('cors');
+

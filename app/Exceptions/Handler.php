@@ -56,9 +56,9 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-         if ($exception instanceof ValidationException){
+        /* if ($exception instanceof ValidationException){
             return $this->convertValidationExceptionToResponse($exception,$request);
-        }
+        }*/
 
         if ($exception instanceof ModelNotFoundException){
 
@@ -66,10 +66,11 @@ class Handler extends ExceptionHandler
             return $this->errorResponse('No existe ninguna instancia de '.$modelo.' con el id especificado',404);
         }
 
-        if ($exception instanceof AuthenticationException) {
+       /* if ($exception instanceof AuthenticationException) {
             return $this->unauthenticated($request, $exception);
         }
-
+        */
+        
         if ($exception instanceof AuthorizationException) {
             return $this->errorResponse('No posee permisos para ejecutar esta acción',403);
         }
@@ -105,25 +106,25 @@ class Handler extends ExceptionHandler
         return $this->errorResponse('Ocurrió un error inesperado.Inténtelo de nuevo mas tarde',500);
     }
 
-    protected function unauthenticated($request, AuthenticationException $exception)
+   /* protected function unauthenticated($request, AuthenticationException $exception)
     {
-        /*if ($this->isFrontend($request)){
-            return redirect()->guest('login');
-        }*/
+        //if ($this->isFrontend($request)){
+        //    return redirect()->guest('login');
+        //}
             return $this->errorResponse('No autenticado',401);
-    }
+    }*/
 
-    protected function convertValidationExceptionToResponse(ValidationException $e, $request)
+   /* protected function convertValidationExceptionToResponse(ValidationException $e, $request)
     {
         $errors = $e->validator->errors()->getMessages();
     
-        /* if ($this->isFrontend($request)){
+        //if ($this->isFrontend($request)){
            
-           return $request->ajax() ? response()->json($errors,422) : redirect()
-                            ->back()
-                            ->withInput($request->input())
-                            ->withErrors($errors);
-        }*/
+          // return $request->ajax() ? response()->json($errors,422) : redirect()
+           //                 ->back()
+           //                 ->withInput($request->input())
+           //                 ->withErrors($errors);
+        //}
             return $this->errorResponse($errors,422);
-    }
+    }*/
 }
