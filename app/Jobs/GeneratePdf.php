@@ -47,6 +47,8 @@ class GeneratePdf implements ShouldQueue
     {
         // recoger los datos a pintar
 
+      $contenido = [];
+
         if ($this->ids == 'all'){
                 // todas las jornadas de 1 user
                 if ($this->identificador != 0){
@@ -104,9 +106,12 @@ class GeneratePdf implements ShouldQueue
                           $j->date = $string_date;
 
                          $j->user_data = $j->user;
+                         // new
+                         $contenido[] = $j->id;
                     } 
            
                 }
+
 
 
                
@@ -160,8 +165,21 @@ class GeneratePdf implements ShouldQueue
                 'user_id' => $this->user->sub,
                 'namefile' => $file_name,
                 'datetime' => date("Y-m-d H:i:s",$unixtime),
-                'type' => $type
+                'type' => $type,
+                'content' => json_encode($contenido)
             ]);
+
+        // Si es un PDF automático se debe poner set_trigger a 0,0 -> Asi si te sales de la App Angular se llama al genpdf y se hace esto tmb !!
+
+            if ($type == 'auto'){
+
+                DB::table('trigger_pdf')
+                            ->where('user_id',$this->user->sub)
+                             ->update([ 
+                                          'quantity' => 0,
+                                          'id_journeys'=> '0'
+                                      ]);
+            }
         
     //dd(storage_path('app/public/images'));
         $pdf= $html2pdf->Output(storage_path('app/pdf/').$file_name, 'F'); 

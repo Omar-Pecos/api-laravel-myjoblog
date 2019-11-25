@@ -251,7 +251,9 @@ class UserController extends ApiController
                 'user' => $usuario
             ];*/
 
-            DB::select('call regaccion(?,?,?,?)',array($user->sub,$user->name.' '.$user->surname,$user->role,'Edición de '.$usuario->name.' '.$usuario->surname));
+        $now = time();
+        $fechayhora = date("Y-m-d H:i:s",$now);
+            DB::statement('call regaccion(?,?,?,?,?)',array($user->sub,$user->name.' '.$user->surname,$user->role,'Edición de '.$usuario->name.' '.$usuario->surname,$fechayhora));
 
              return $this->showOne($usuario,'user');
         
@@ -326,7 +328,9 @@ class UserController extends ApiController
 
                   $user->delete();
 
-                  DB::select('call regaccion(?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Borrado de '.$user->name.' '.$user->surname.' y sus registros asociados'));
+                   $now = time();
+                  $fechayhora = date("Y-m-d H:i:s",$now);
+                  DB::statement('call regaccion(?,?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Borrado de '.$user->name.' '.$user->surname.' y sus registros asociados',$fechayhora));
 
               return $this->showOne($user,'userdeleted');
 
@@ -414,8 +418,9 @@ class UserController extends ApiController
               'message' => 'Usuario registrado correctamente');*/
 
               // Creacion desde el sistema por parte de un ADMIN
-             
-                DB::select('call regaccion(?,?,?,?)',array(0,$user->name.' '.$user->surname,$user->role,'Registro de '.$user->name.' '.$user->surname));
+               $now = time();
+              $fechayhora = date("Y-m-d H:i:s",$now);
+                DB::statement('call regaccion(?,?,?,?,?)',array(0,$user->name.' '.$user->surname,$user->role,'Registro de '.$user->name.' '.$user->surname,$fechayhora));
               
               return $this->showOne($user,'registered');
             }
@@ -486,7 +491,9 @@ class UserController extends ApiController
             $user->role = 'admin';
             $user->save();
 
-            DB::select('call regaccion(?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Elevar privilegios a '.$user->name.' '.$user->surname));
+             $now = time();
+          $fechayhora = date("Y-m-d H:i:s",$now);
+            DB::statement('call regaccion(?,?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Elevar privilegios a '.$user->name.' '.$user->surname,$fechayhora));
             return $this->showOne($user,'useradmin');
 
         }else{
@@ -509,18 +516,20 @@ class UserController extends ApiController
               $usuario = $JwtAuth->checkToken($hash,true);
              $user = User::find($id);
 
+              $now = time();
+              $fechayhora = date("Y-m-d H:i:s",$now);
              if ($activo == 0 ){
               // elimina ese user porque no lo acepta en el sistema
                 $user->delete();
 
                  DB::table('trigger_pdf')->where('user_id', '=', $user->id)->delete();
-                 DB::select('call regaccion(?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Denegación de registro y borrado de '.$user->name.' '.$user->surname));
+                 DB::statement('call regaccion(?,?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Denegación de registro y borrado de '.$user->name.' '.$user->surname,$fechayhora));
 
              }elseif($activo == 1 ) {
                  $user->active = 1;
                 $user->save();
 
-                DB::select('call regaccion(?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Aceptación en el sistema de '.$user->name.' '.$user->surname));
+                DB::statement('call regaccion(?,?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Aceptación en el sistema de '.$user->name.' '.$user->surname,$fechayhora));
              }
 
             $data = [

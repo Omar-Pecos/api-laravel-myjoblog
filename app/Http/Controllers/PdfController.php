@@ -176,13 +176,38 @@ class PdfController extends ApiController
         if ($checkToken){
                  $usuario = $JwtAuth->checkToken($hash,true);
               $name = $request->name;
-             //$path = storage_path("app/pdf/".$name);
+             //$path = storage_path("app/pdf/".$name);xxx
 
-             Export::where('namefile', '=', $name)->delete();
+
+              // segun el export de tal namefile -> att -> content (arrya con las jornadas)
+              $exports = Export::where('namefile', '=', $name)->get();
+              $export = $exports->first();
+
+              if ($export->type == 'generated'){
+                    $id_jornadas = json_decode($export->content,true);
+
+                  // -> saca las jornadas
+                  $jornadas = Journey::find($id_jornadas);
+                  // recorre las jornadas y elimina sus firmas y las jornadas
+                  if (count($jornadas) > 0){
+                        foreach ($jornadas as $j) {
+                             Storage::disk('images')->delete($j->signature);
+                             $j->delete();
+                        }
+                  }
+              }
+              
+
+              // luego delete el export y el file en server
+                // $export->delete();
+              foreach ($exports as $e) {
+                             $e->delete();
+                        }
              Storage::disk('local')->delete('pdf/'.$name);
 
-
-             DB::select('call regaccion(?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Borrado del pdf -  '.$name));
+             $now = time();
+             $fechayhora = date("Y-m-d H:i:s",$now);
+             DB::statement('call regaccion(?,?,?,?,?)',array($usuario->sub,$usuario->name.' '.$usuario->surname,$usuario->role,'Borrado del pdf -  '.$name,$fechayhora));
 
              return response()->json([
                 'status' => 'success',

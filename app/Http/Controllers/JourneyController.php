@@ -56,6 +56,8 @@ class JourneyController extends ApiController
                           $string_date = $date[2].'/'.$date[1].'/'.$date[0];
                           $j->date = $string_date;
 
+                          $j->time = round($j->time/60/60,2);
+                          
                           $userJornada =  User::where('id',$j->user_id)->first();
                           $j->user = $userJornada->getAttributes();
                     }  
@@ -151,14 +153,13 @@ class JourneyController extends ApiController
                           $date =  explode("-", $j->date);
                           $string_date = $date[2].'/'.$date[1].'/'.$date[0];
                           $j->date = $string_date;
+
+                          $j->time = round($j->time/60/60,2);
                     }
 
                 }else{
 
-                       
-                            $journeys = $usuario->journeys;
-                       
-                    
+                            $journeys = $usuario->journeys;   
                 }             
                    
 
@@ -759,6 +760,10 @@ public function chart_donut_dia ($id,Request $request){
                          $today = time()-($jornadaactiva[0]->initial_time);
 
                          $today -= $jornadaactiva[0]->time_lost;
+
+                          if ($today > 0){
+                            $today = round(($today/60/60),2);
+                        }
 
                     }else{
                         //tiene jornada finalizada o todavia no la ha hecho

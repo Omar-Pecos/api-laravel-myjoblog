@@ -19,6 +19,8 @@ class CreateExportsTable extends Migration
             $table->dateTime('datetime');
             $table->bigInteger('initial_time');
             $table->string('namefile');
+            $table->string('type'); 
+            $table->text('content');
 
             $table->foreign('user_id')->references('id')->on('users');
         });

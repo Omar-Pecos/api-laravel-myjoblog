@@ -47,7 +47,9 @@ class JobController extends ApiController
                       $string = 'automático';
                   }
 
-                  DB::select('call regaccion(?,?,?,?)',array($user->sub,$user->name.' '.$user->surname,$user->role,'Generado un pdf '.$string));
+                $now = time();
+                $fechayhora = date("Y-m-d H:i:s",$now);
+                  DB::statement('call regaccion(?,?,?,?,?)',array($user->sub,$user->name.' '.$user->surname,$user->role,'Generado un pdf '.$string,$fechayhora));
                   return response()->json($data,200);
 
          }else{
