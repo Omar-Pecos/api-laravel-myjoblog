@@ -111,10 +111,16 @@ class PdfController extends ApiController
             // sacar los nombre de la BDD
                // $names = DB::table('exports')->where('user_id',$user->sub)->get();
 
-             $names = Export::where('user_id',$user->sub)
+            if ($type == 'auto'){
+                $names = Export::where('user_id',$user->sub)
                         ->where('type',$type)
                         ->get();
-        
+            }
+            else{
+                 $names = Export::where('type',$type)
+                        ->get();
+            }
+            
               //return response()->json(['status'=>'success','files'=>$names],200);
                 return $this->showAll($names,'files');
 
