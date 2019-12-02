@@ -436,28 +436,10 @@
 	"buffers":
 	[
 		{
-			"file": "app/Http/Controllers/JourneyController.php",
+			"file": ".env",
 			"settings":
 			{
-				"buffer_size": 32828,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/Http/Controllers/PdfController.php",
-			"settings":
-			{
-				"buffer_size": 7808,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/Jobs/GeneratePdf.php",
-			"settings":
-			{
-				"buffer_size": 6013,
+				"buffer_size": 822,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -516,21 +498,15 @@
 	},
 	"expanded_folders":
 	[
-		"/C/wamp64/www/myjoblognew",
-		"/C/wamp64/www/myjoblognew/app",
-		"/C/wamp64/www/myjoblognew/app/Exceptions",
-		"/C/wamp64/www/myjoblognew/app/Helpers",
-		"/C/wamp64/www/myjoblognew/app/Http",
-		"/C/wamp64/www/myjoblognew/app/Http/Controllers",
-		"/C/wamp64/www/myjoblognew/app/Jobs",
-		"/C/wamp64/www/myjoblognew/database",
-		"/C/wamp64/www/myjoblognew/routes"
 	],
 	"file_history":
 	[
+		"/C/wamp64/www/myjoblognew/app/Http/Controllers/PdfController.php",
+		"/C/wamp64/www/myjoblognew/app/Http/Controllers/JourneyController.php",
+		"/C/wamp64/www/myjoblognew/app/Jobs/GeneratePdf.php",
+		"/C/wamp64/www/myjoblognew/resources/views/welcome.blade.php",
 		"/C/wamp64/www/myjoblognew/database/migrations/2019_11_14_000000_create_exports_table.php",
 		"/C/wamp64/www/myjoblognew/storage/app/pdf/myjoblog_ID_1_jornadas2019_05-08-2019_al_09-11-2019.pdf",
-		"/C/wamp64/www/myjoblognew/app/Http/Controllers/PdfController.php",
 		"/C/wamp64/www/myjoblognew/app/Http/Controllers/UserController.php",
 		"/C/wamp64/www/myjoblognew/app/Helpers/JwtAuth.php",
 		"/C/wamp64/www/myjoblognew/app/Http/Controllers/JobController.php",
@@ -538,7 +514,6 @@
 		"/C/wamp64/www/myjoblognew/routes/api.php",
 		"/C/wamp64/www/myjoblognew/app/Journey.php",
 		"/C/wamp64/www/myjoblognew/app/Exceptions/Handler.php",
-		"/C/wamp64/www/myjoblognew/app/Http/Controllers/JourneyController.php",
 		"/C/wamp64/www/myjoblognew/app/Http/Controllers/LogController.php",
 		"/C/wamp64/www/myjoblognew/routes/web.php",
 		"/C/wamp64/www/myjoblognew/app/Http/Kernel.php",
@@ -643,7 +618,7 @@
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 27.0
 	},
 	"find_in_files":
 	{
@@ -675,85 +650,32 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "app/Http/Controllers/JourneyController.php",
+					"file": ".env",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 32828,
+						"buffer_size": 822,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1991,
-								1991
+								242,
+								232
 							]
 						],
 						"settings":
 						{
-							"SL.13.region_keys":
-							[
-								"sublime_linter.protected_regions"
-							],
-							"SL.34.region_keys":
-							[
-								"sublime_linter.protected_regions"
-							],
-							"auto_complete": false,
-							"syntax": "Packages/PHP/PHP.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1044.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "app/Http/Controllers/PdfController.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7808,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6768,
-								6768
-							]
-						],
-						"settings":
-						{
-							"SL.14.region_keys":
-							[
-								"sublime_linter.protected_regions"
-							],
-							"SL.30.region_keys":
+							"SL.29.region_keys":
 							[
 							],
-							"SL.39.region_keys":
-							[
-								"sublime_linter.protected_regions"
-							],
-							"SL.87.region_keys":
-							[
-							],
-							"auto_complete": false,
-							"syntax": "Packages/PHP/PHP.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -761,55 +683,13 @@
 					},
 					"stack_index": 0,
 					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "app/Jobs/GeneratePdf.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6013,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5038,
-								5038
-							]
-						],
-						"settings":
-						{
-							"SL.15.region_keys":
-							[
-							],
-							"SL.31.region_keys":
-							[
-								"sublime_linter.protected_regions"
-							],
-							"SL.40.region_keys":
-							[
-								"sublime_linter.protected_regions"
-							],
-							"auto_complete": false,
-							"syntax": "Packages/PHP/PHP.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2714.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
 				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 28.0
+		"height": 27.0
 	},
 	"input":
 	{
@@ -850,7 +730,7 @@
 	"project": "MyJobLog New (THEGOODONE).sublime-project",
 	"replace":
 	{
-		"height": 52.0
+		"height": 50.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -920,7 +800,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 511.0,
+	"side_bar_width": 285.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

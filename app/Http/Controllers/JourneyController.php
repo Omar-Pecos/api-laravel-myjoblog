@@ -679,26 +679,26 @@ public function chart_donut_porcentaje ($id,Request $request){
                    $mishoras = Journey::where('user_id',$id)->sum('time');
 
                    $today = 0;
-                   //tiene jornada activa 
-                    if (count($jornadaactiva) == 1){
-                            // TODO -- quedaria quitar tmb el tiempo de las paradas
-                         $today = time()-($jornadaactiva[0]->initial_time);
+               //tiene jornada activa 
+                if (count($jornadaactiva) == 1){
+                        // TODO -- quedaria quitar tmb el tiempo de las paradas
+                     $today = time()-($jornadaactiva[0]->initial_time);
 
-                         $today -= $jornadaactiva[0]->time_lost;
+                     $today -= $jornadaactiva[0]->time_lost;
 
-                         /*if ($today > 0){
-                            $today = round(($today/60/60),2);
-                        }*/
+                     /*if ($today > 0){
+                        $today = round(($today/60/60),2);
+                    }*/
 
-                    }else{
-                        //tiene jornada finalizada o todavia no la ha hecho
-                        if (count($jornada) >= 1){
+                }
+                //tiene jornada finalizada o todavia no la ha hecho
+                if (count($jornada) >= 1){
 
-                            foreach ($jornada as $j) {
-                                $today += $j->time;
-                            }
-                        }
+                    foreach ($jornada as $j) {
+                        $today += $j->time;
                     }
+                }
+                    
 
                     $mishoras += $today;
 
@@ -754,27 +754,28 @@ public function chart_donut_dia ($id,Request $request){
 
                     $today = 0;
 
-                    //tiene jornada activa 
-                    if (count($jornadaactiva) == 1){
-                            // TODO -- quedaria quitar tmb el tiempo de las paradas
-                         $today = time()-($jornadaactiva[0]->initial_time);
+                //tiene jornada activa 
+                if (count($jornadaactiva) == 1){
+                        // TODO -- quedaria quitar tmb el tiempo de las paradas
+                     $today = time()-($jornadaactiva[0]->initial_time);
 
-                         $today -= $jornadaactiva[0]->time_lost;
+                     $today -= $jornadaactiva[0]->time_lost;
 
-                          if ($today > 0){
-                            $today = round(($today/60/60),2);
-                        }
-
-                    }else{
-                        //tiene jornada finalizada o todavia no la ha hecho
-                        if (count($jornada) >= 1){
-
-                            foreach ($jornada as $j) {
-                                $today += $j->time;
-                            }
-                           // $today = $jornada[0]->time;
-                        }
+                      if ($today > 0){
+                        $today = round(($today/60/60),2);
                     }
+
+                }
+   
+                //tiene jornada finalizada o todavia no la ha hecho
+                if (count($jornada) >= 1){
+
+                    foreach ($jornada as $j) {
+                        $today += $j->time;
+                    }
+                   // $today = $jornada[0]->time;
+                }
+                    
 
                    /* if ($today > 0){
                             $today = round(($today/60/60),2);
@@ -822,26 +823,27 @@ public function chart_donut_mes ($id,Request $request){
                             ->where('date','like','%'.$meshoy.'%')
                             ->sum('time');
 
-                    //tiene jornada activa 
-                    if (count($jornadaactiva) == 1){
-                            // TODO -- quedaria quitar tmb el tiempo de las paradas
-                         $today = time()-($jornadaactiva[0]->initial_time);
-                         $today -= $jornadaactiva[0]->time_lost;
+                //tiene jornada activa 
+                if (count($jornadaactiva) == 1){
+                        // TODO -- quedaria quitar tmb el tiempo de las paradas
+                     $today = time()-($jornadaactiva[0]->initial_time);
+                     $today -= $jornadaactiva[0]->time_lost;
 
-                       /* if ($today > 0){
-                            $today = round(($today/60/60),2);
-                        }*/
+                   /* if ($today > 0){
+                        $today = round(($today/60/60),2);
+                    }*/
 
-                    }else{
-                        //tiene jornada finalizada o todavia no la ha hecho
-                        if (count($jornada) >= 1){
+                }
 
-                            foreach ($jornada as $j) {
-                                $today += $j->time;
-                            }
-                           // $today = $jornada[0]->time;
-                        }
+                //tiene jornada finalizada o todavia no la ha hecho
+                if (count($jornada) >= 1){
+
+                    foreach ($jornada as $j) {
+                        $today += $j->time;
                     }
+                   // $today = $jornada[0]->time;
+                }
+                    
 
                     $mes += $today;
 
@@ -893,26 +895,27 @@ public function chart_donut_anio ($id,Request $request){
                             ->where('date','like','%'.$añohoy.'%')
                             ->sum('time');
 
-                    //tiene jornada activa 
-                    if (count($jornadaactiva) == 1){
-                            // TODO -- quedaria quitar tmb el tiempo de las paradas
-                         $today = time()-($jornadaactiva[0]->initial_time);
-                         $today -= $jornadaactiva[0]->time_lost;
+                //tiene jornada activa 
+                if (count($jornadaactiva) == 1){
+                        // TODO -- quedaria quitar tmb el tiempo de las paradas
+                     $today = time()-($jornadaactiva[0]->initial_time);
+                     $today -= $jornadaactiva[0]->time_lost;
 
-                         if ($today > 0){
-                            $today = round(($today/60/60),2);
-                        }
-
-                    }else{
-                        //tiene jornada finalizada o todavia no la ha hecho
-                        if (count($jornada) >= 1){
-
-                            foreach ($jornada as $j) {
-                                $today += $j->time;
-                            }
-                           // $today = $jornada[0]->time;
-                        }
+                     if ($today > 0){
+                        $today = round(($today/60/60),2);
                     }
+
+                }
+
+                //tiene jornada finalizada o todavia no la ha hecho
+                if (count($jornada) >= 1){
+
+                    foreach ($jornada as $j) {
+                        $today += $j->time;
+                    }
+                   // $today = $jornada[0]->time;
+                }
+                    
 
                     $año += $today;
 
